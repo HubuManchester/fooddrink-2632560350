@@ -1,0 +1,45 @@
+## .NET MAUI
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.dll
+*.pdb
+*.apk
+*.aab
+*.ipa
+*.dSYM
+*.app
+*.xap
+
+## Visual Studio
+.vs/
+*.vsidx
+*.vssscc
+*.vspx
+*.sap
+
+## Rider
+.idea/
+
+## OS
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+## NuGet
+*.nupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+
+## Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/

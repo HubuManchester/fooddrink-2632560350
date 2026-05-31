@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:converters="clr-namespace:FlavorVault.Converters"
+             xmlns:models="clr-namespace:FlavorVault.Models"
+             x:Class="FlavorVault.Controls.CatalogListCard"
+             x:Name="This">
+
+    <ContentView.Resources>
+        <converters:StringToUriConverter x:Key="StringToUriConverter" />
+        <converters:RarityToColorConverter x:Key="RarityToColorConverter" />
+        <converters:TasteToColorConverter x:Key="TasteToColorConverter" />
+        <converters:CollectStatusToIconConverter x:Key="CollectStatusToIconConverter" />
+        <converters:PriceRangeToStringConverter x:Key="PriceRangeToStringConverter" />
+        <converters:StringNotNullConverter x:Key="StringNotNullConverter" />
+    </ContentView.Resources>
+
+    <Border
+        StrokeShape="RoundRectangle 12"
+        StrokeThickness="0"
+        BackgroundColor="{AppThemeBinding Light={DynamicResource Surface}, Dark={DynamicResource Surface}}"
+        Padding="0"
+        Margin="4">
+        <Border.Shadow>
+            <Shadow Brush="{AppThemeBinding Light=#20000000, Dark=#30000000}"
+                    Offset="0,2"
+                    Radius="6"
+                    Opacity="0.3" />
+        </Border.Shadow>
+
+        <Border.GestureRecognizers>
+            <TapGestureRecognizer
+                Command="{Binding Source={x:Reference This}, Path=TapCommand}"
+                CommandParameter="{Binding Source={x:Reference This}, Path=Entry}" />
+        </Border.GestureRecognizers>
+
+        <Grid RowDefinitions="*,Auto" ColumnDefinitions="70,* ,Auto" Padding="10" RowSpacing="2" ColumnSpacing="10">
+
+            <!-- 左：方形缩略图 + 图鉴编号叠加 -->
+            <Grid Grid.Row="0" Grid.Column="0" WidthRequest="70" HeightRequest="70"
+                  BackgroundColor="{AppThemeBinding Light=#F0F0F0, Dark=#333333}">
+
+                <!-- 底层占位 -->
+                <Label Text="&#xf0f5;"
+                       FontFamily="fa-solid-900"
+                       FontSize="{DynamicResource FontSize20}"
+                       TextColor="{AppThemeBinding Light=#CCCCCC, Dark=#555555}"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center" />
+
+                <!-- 上层图片 -->
+                <Image Source="{Binding Source={x:Reference This}, Path=Entry.ImagePath, Converter={StaticResource StringToUriConverter}}"
+                       Aspect="AspectFill" />
+
+                <!-- 图鉴编号叠加 -->
+                <Border HorizontalOptions="Start" VerticalOptions="End"
+                        Margin="2" Padding="2,1"
+                        BackgroundColor="#80000000"
+                        StrokeShape="RoundRectangle 2"
+                        StrokeThickness="0">
+                    <Label Text="{Binding Source={x:Reference This}, Path=Entry.CatalogNumber}"
+                           TextColor="White" FontSize="{DynamicResource FontSize7}" />
+                </Border>
+            </Grid>
+
+            <!-- 中上：食物名称 + 稀有度徽章 -->
+            <StackLayout Grid.Row="0" Grid.Column="1" VerticalOptions="Start" Spacing="2">
+                <Label Text="{Binding Source={x:Reference This}, Path=Entry.Name}"
+                       FontAttributes="Bold" FontSize="{DynamicResource FontSize14}" LineBreakMode="TailTruncation"
+                       TextColor="{AppThemeBinding Light={DynamicResource TextPrimary}, Dark={DynamicResource TextPrimary}}" />
+
+                <HorizontalStackLayout Spacing="4">
+                    <Border StrokeShape="RoundRectangle 4" StrokeThickness="0" Padding="4,1"
+                            BackgroundColor="{Binding Source={x:Reference This}, Path=Entry.Rarity, Converter={StaticResource RarityToColorConverter}}">
+                        <Label Text="{Binding Source={x:Reference This}, Path=Entry.Rarity}"
+                               TextColor="White" FontSize="{DynamicResource FontSize9}" />
+                    </Border>
+                </HorizontalStackLayout>
+
+                <!-- 中下：地区 + 价格区间 -->
+                <HorizontalStackLayout Spacing="6" Margin="0,2,0,0">
+                    <Label Text="{Binding Source={x:Reference This}, Path=Entry.Region}"
+                           FontSize="{DynamicResource FontSize11}"
+                           TextColor="{AppThemeBinding Light={DynamicResource TextSecondary}, Dark={DynamicResource TextSecondary}}" />
+                    <Label Text="{Binding Source={x:Reference This}, Path=Entry.PriceRange, Converter={StaticResource PriceRangeToStringConverter}}"
+                           FontSize="{DynamicResource FontSize11}"
+                           TextColor="{AppThemeBinding Light={DynamicResource TextSecondary}, Dark={DynamicResource TextSecondary}}" />
+                </HorizontalStackLayout>
+            </StackLayout>
+
+            <!-- 右：星级 + 收藏状态图标 -->
+            <StackLayout Grid.Row="0" Grid.Column="2" VerticalOptions="Center" HorizontalOptions="End" Spacing="4">
+                <Label HorizontalOptions="End">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="&#xf005;" FontFamily="fa-solid-900" FontSize="{DynamicResource FontSize10}"
+                                  TextColor="#FFD700" />
+                            <Span Text="{Binding Source={x:Reference This}, Path=Entry.StarRating}"
+                                  FontSize="{DynamicResource FontSize12}" FontAttributes="Bold"
+                                  TextColor="{AppThemeBinding Light={DynamicResource TextPrimary}, Dark={DynamicResource TextPrimary}}" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <Label Text="{Binding Source={x:Reference This}, Path=Entry.CollectStatus, Converter={StaticResource CollectStatusToIconConverter}}"
+                       FontFamily="fa-solid-900"
+                       FontSize="{DynamicResource FontSize14}"
+                       TextColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource Primary}}"
+                       HorizontalOptions="End" />
+            </StackLayout>
+
+            <!-- 底部：主味 + 香气 胶囊标签 -->
+            <HorizontalStackLayout Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"
+                                   Spacing="6" Margin="0,2,0,0">
+
+                <!-- 主味标签 -->
+                <Border StrokeShape="RoundRectangle 8" StrokeThickness="0" Padding="6,2"
+                        BackgroundColor="{Binding Source={x:Reference This}, Path=Entry.PrimaryTaste, Converter={StaticResource TasteToColorConverter}}"
+                        IsVisible="{Binding Source={x:Reference This}, Path=Entry.PrimaryTaste, Converter={StaticResource StringNotNullConverter}}">
+                    <Label Text="{Binding Source={x:Reference This}, Path=Entry.PrimaryTaste}"
+                           TextColor="White" FontSize="{DynamicResource FontSize9}" />
+                </Border>
+
+                <!-- 香气标签 -->
+                <Border StrokeShape="RoundRectangle 8" StrokeThickness="0" Padding="6,2"
+                        BackgroundColor="{AppThemeBinding Light=#E0E0E0, Dark=#444444}"
+                        IsVisible="{Binding Source={x:Reference This}, Path=Entry.AromaTag, Converter={StaticResource StringNotNullConverter}}">
+                    <Label Text="{Binding Source={x:Reference This}, Path=Entry.AromaTag}"
+                           FontSize="{DynamicResource FontSize9}"
+                           TextColor="{AppThemeBinding Light={DynamicResource TextSecondary}, Dark={DynamicResource TextSecondary}}" />
+                </Border>
+            </HorizontalStackLayout>
+
+        </Grid>
+    </Border>
+</ContentView>

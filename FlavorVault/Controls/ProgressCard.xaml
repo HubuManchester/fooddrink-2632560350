@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:converters="clr-namespace:FlavorVault.Converters"
+             xmlns:models="clr-namespace:FlavorVault.Models"
+             x:Class="FlavorVault.Controls.ProgressCard"
+             x:Name="This">
+
+    <ContentView.Resources>
+        <converters:ProgressToWidthConverter x:Key="ProgressToWidthConverter" />
+    </ContentView.Resources>
+
+    <Border
+        StrokeShape="RoundRectangle 12"
+        StrokeThickness="0"
+        BackgroundColor="{AppThemeBinding Light={DynamicResource Surface}, Dark={DynamicResource Surface}}"
+        Padding="12"
+        Margin="4">
+        <Border.Shadow>
+            <Shadow Brush="{AppThemeBinding Light=#20000000, Dark=#30000000}"
+                    Offset="0,2"
+                    Radius="6"
+                    Opacity="0.3" />
+        </Border.Shadow>
+
+        <StackLayout Spacing="8">
+            <!-- 标题 -->
+            <Label Text="收录进度"
+                   FontAttributes="Bold"
+                   FontSize="{DynamicResource FontSize16}"
+                   TextColor="{AppThemeBinding Light={DynamicResource TextPrimary}, Dark={DynamicResource TextPrimary}}" />
+
+            <!-- 地区进度列表 -->
+            <CollectionView
+                ItemsSource="{Binding Source={x:Reference This}, Path=RegionProgresses}"
+                HeightRequest="300"
+                VerticalScrollBarVisibility="Never">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid ColumnDefinitions="50,*,40" ColumnSpacing="8" Padding="0,3">
+                            <!-- 地区名 -->
+                            <Label Grid.Column="0"
+                                   Text="{Binding Region}"
+                                   FontSize="{DynamicResource FontSize11}"
+                                   VerticalOptions="Center"
+                                   TextColor="{AppThemeBinding Light={DynamicResource TextSecondary}, Dark={DynamicResource TextSecondary}}" />
+
+                            <!-- 进度条 -->
+                            <Grid Grid.Column="1" VerticalOptions="Center" HeightRequest="8">
+                                <!-- 背景 -->
+                                <Border StrokeShape="RoundRectangle 4"
+                                        StrokeThickness="0"
+                                        BackgroundColor="{AppThemeBinding Light=#E0E0E0, Dark=#444444}" />
+                                <!-- 前景 -->
+                                <Border StrokeShape="RoundRectangle 4"
+                                        StrokeThickness="0"
+                                        BackgroundColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource Primary}}"
+                                        HorizontalOptions="Start"
+                                        WidthRequest="{Binding ProgressPercent, Converter={StaticResource ProgressToWidthConverter}, ConverterParameter=200}" />
+                            </Grid>
+
+                            <!-- 件数 -->
+                            <Label Grid.Column="2"
+                                   Text="{Binding ProgressText}"
+                                   FontSize="{DynamicResource FontSize10}"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="End"
+                                   TextColor="{AppThemeBinding Light={DynamicResource TextSecondary}, Dark={DynamicResource TextSecondary}}" />
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </StackLayout>
+    </Border>
+</ContentView>

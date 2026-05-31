@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:FlavorVault.ViewModels"
+             xmlns:converters="clr-namespace:FlavorVault.Converters"
+             xmlns:controls="clr-namespace:FlavorVault.Controls"
+             x:Class="FlavorVault.Views.WishListPage"
+             x:DataType="viewmodels:WishListViewModel"
+             Title="心愿清单"
+             BackgroundColor="{DynamicResource Background}">
+
+    <ContentPage.Resources>
+        <converters:PriorityToColorConverter x:Key="PriorityToColorConverter" />
+        <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,Auto,Auto,*,Auto"
+          RowSpacing="0">
+
+        <!-- 统计头部 -->
+        <VerticalStackLayout Grid.Row="0"
+                             Padding="20,16,20,8"
+                             Spacing="8">
+            <Label Text="心愿清单"
+                   FontSize="{DynamicResource FontSize24}"
+                   FontAttributes="Bold"
+                   TextColor="{DynamicResource TextPrimary}" />
+            <Label Text="{Binding SummaryText}"
+                           FontSize="{DynamicResource FontSize14}"
+                           TextColor="{DynamicResource TextSecondary}" />
+            <!-- 进度条 -->
+            <Grid ColumnDefinitions="*,Auto"
+                  HeightRequest="8"
+                  Margin="0,4,0,0">
+                <ProgressBar Grid.Column="0"
+                             Progress="{Binding ProgressValue}"
+                             MinimumHeightRequest="8"
+                             BackgroundColor="{DynamicResource PrimaryLight}"
+                             ProgressColor="{DynamicResource Primary}" />
+                <Label Grid.Column="1"
+                       Text="{Binding ProgressPercentText}"
+                       FontSize="{DynamicResource FontSize12}"
+                       TextColor="{DynamicResource TextSecondary}"
+                       VerticalOptions="Center"
+                       Margin="8,0,0,0" />
+            </Grid>
+        </VerticalStackLayout>
+
+        <!-- 优先级筛选 -->
+        <HorizontalStackLayout Grid.Row="1"
+                               Padding="20,8,20,12"
+                               Spacing="8">
+            <Button Text="全部"
+                    AutomationId="BtnFilterAll"
+                    Command="{Binding FilterByPriorityCommand}"
+                    CommandParameter="全部"
+                    FontSize="{DynamicResource FontSize13}"
+                    Padding="16,6"
+                    HeightRequest="36" />
+            <Button Text="尽快"
+                    AutomationId="BtnFilterHigh"
+                    Command="{Binding FilterByPriorityCommand}"
+                    CommandParameter="尽快"
+                    FontSize="{DynamicResource FontSize13}"
+                    Padding="16,6"
+                    HeightRequest="36" />
+            <Button Text="有空就去"
+                    AutomationId="BtnFilterMedium"
+                    Command="{Binding FilterByPriorityCommand}"
+                    CommandParameter="有空就去"
+                    FontSize="{DynamicResource FontSize13}"
+                    Padding="16,6"
+                    HeightRequest="36" />
+            <Button Text="随缘"
+                    AutomationId="BtnFilterLow"
+                    Command="{Binding FilterByPriorityCommand}"
+                    CommandParameter="随缘"
+                    FontSize="{DynamicResource FontSize13}"
+                    Padding="16,6"
+                    HeightRequest="36" />
+        </HorizontalStackLayout>
+
+        <!-- 分隔线 -->
+        <BoxView Grid.Row="2"
+                 HeightRequest="1"
+                 BackgroundColor="{DynamicResource PrimaryLight}"
+                 Margin="20,0" />
+
+        <!-- 心愿列表（支持下拉刷新） -->
+        <RefreshView Grid.Row="3"
+                     IsRefreshing="{Binding IsBusy}"
+                     Command="{Binding LoadCommand}"
+                     Margin="0,8,0,0">
+            <CollectionView ItemsSource="{Binding WishItems}"
+                            SelectionMode="None"
+                            Margin="16,0"
+                            ItemSizingStrategy="MeasureFirstItem">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <controls:WishCard Margin="0,4" />
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout HorizontalOptions="Center"
+                                         VerticalOptions="Center"
+                                         Spacing="12"
+                                         Margin="0,40,0,0">
+                        <Label Text="&#xf00d;"
+                               FontFamily="fa-solid-900"
+                               FontSize="{DynamicResource FontSize40}"
+                               TextColor="{DynamicResource TextSecondary}"
+                               HorizontalOptions="Center" />
+                        <Label Text="暂无心愿条目"
+                               FontSize="{DynamicResource FontSize16}"
+                               TextColor="{DynamicResource TextSecondary}"
+                               HorizontalOptions="Center" />
+                        <Label Text="点击下方按钮添加你的第一个心愿吧"
+                               FontSize="{DynamicResource FontSize13}"
+                               TextColor="{DynamicResource TextSecondary}"
+                               HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
+            </CollectionView>
+        </RefreshView>
+
+        <!-- 底部添加按钮 -->
+        <Border Grid.Row="4"
+                BackgroundColor="{DynamicResource Surface}"
+                StrokeShape="RoundRectangle 0"
+                StrokeThickness="0"
+                Padding="16,12"
+                HorizontalOptions="Fill"
+                VerticalOptions="End">
+            <Button Text="&#xf067; 添加心愿"
+                    AutomationId="BtnAddWish"
+                    FontFamily="fa-solid-900"
+                    FontSize="{DynamicResource FontSize16}"
+                    FontAttributes="Bold"
+                    BackgroundColor="{DynamicResource Primary}"
+                    TextColor="White"
+                    HeightRequest="48"
+                    CornerRadius="24"
+                    Command="{Binding AddWishCommand}" />
+        </Border>
+    </Grid>
+</ContentPage>

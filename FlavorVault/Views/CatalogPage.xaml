@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:FlavorVault.ViewModels"
+             xmlns:converters="clr-namespace:FlavorVault.Converters"
+             xmlns:controls="clr-namespace:FlavorVault.Controls"
+             x:Class="FlavorVault.Views.CatalogPage"
+             x:DataType="viewmodels:CatalogViewModel"
+             Title="图鉴"
+             BackgroundColor="{DynamicResource Background}">
+
+    <ContentPage.Resources>
+        <converters:StringNotNullConverter x:Key="StringNotNullConverter" />
+        <converters:RarityToColorConverter x:Key="RarityToColorConverter" />
+        <converters:StringToUriConverter x:Key="StringToUriConverter" />
+        <converters:StringEqualsConverter x:Key="StringEqualsConverter" />
+        <converters:BoolToColorConverter x:Key="ActiveFilterConverter"
+                                         TrueColor="{StaticResource Primary}"
+                                         FalseColor="{StaticResource TextSecondary}" />
+        <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,Auto,Auto,Auto,*,Auto">
+
+        <!-- 搜索栏 -->
+        <Border Grid.Row="0"
+                Margin="16,8"
+                BackgroundColor="{DynamicResource Surface}"
+                StrokeShape="RoundRectangle 12"
+                StrokeThickness="1"
+                Stroke="{DynamicResource PrimaryLight}"
+                Padding="0">
+            <Border.Shadow>
+                <Shadow Brush="#10000000"
+                        Offset="0,1"
+                        Radius="4" />
+            </Border.Shadow>
+            <Grid ColumnDefinitions="Auto,*,Auto"
+                  Padding="12,0"
+                  HeightRequest="44">
+                <Label Grid.Column="0"
+                       FontFamily="fa-solid-900"
+                       Text="&#xf002;"
+                       FontSize="{DynamicResource FontSize16}"
+                       TextColor="{DynamicResource TextSecondary}"
+                       VerticalOptions="Center"
+                       Margin="0,0,8,0"
+                       SemanticProperties.Description="搜索" />
+                <Entry Grid.Column="1"
+                       Placeholder="搜索食物名称..."
+                       Text="{Binding SearchText}"
+                       ReturnCommand="{Binding SearchCommand}"
+                       BackgroundColor="Transparent"
+                       FontSize="{DynamicResource FontSize14}"
+                       AutomationId="SearchEntry"
+                       SemanticProperties.Description="搜索食物名称"
+                       SemanticProperties.Hint="输入食物名称进行搜索" />
+                <ImageButton Grid.Column="2"
+                             WidthRequest="36"
+                             HeightRequest="36"
+                             BackgroundColor="Transparent"
+                             Command="{Binding VoiceSearchCommand}"
+                             AutomationId="BtnVoiceSearch"
+                             SemanticProperties.Description="语音搜索"
+                             SemanticProperties.Hint="点击使用语音搜索">
+                    <ImageButton.Source>
+                        <FontImageSource Glyph="&#xf130;"
+                                         FontFamily="fa-solid-900"
+                                         Color="{DynamicResource Primary}" />
+                    </ImageButton.Source>
+                </ImageButton>
+            </Grid>
+        </Border>
+
+        <!-- 筛选条件行（可折叠） -->
+        <VerticalStackLayout Grid.Row="1"
+                             Spacing="8"
+                             Margin="16,0"
+                             IsVisible="{Binding IsFilterExpanded}">
+
+            <!-- 地区筛选 -->
+            <ScrollView Orientation="Horizontal"
+                        HorizontalScrollBarVisibility="Never">
+                <HorizontalStackLayout Spacing="8"
+                                       BindableLayout.ItemsSource="{Binding Regions}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="x:String">
+                             <Button Text="{Binding .}"
+                                     FontSize="{DynamicResource FontSize13}"
+                                     HeightRequest="32"
+                                     Padding="12,0"
+                                     CornerRadius="16"
+                                     Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:CatalogViewModel}}, Path=FilterRegionCommand}"
+                                     CommandParameter="{Binding .}"
+                                     AutomationId="BtnRegionFilter"
+                                     SemanticProperties.Description="{Binding .}"
+                                     SemanticProperties.Hint="点击按地区筛选" />
+                         </DataTemplate>
+                     </BindableLayout.ItemTemplate>
+                 </HorizontalStackLayout>
+             </ScrollView>
+
+             <!-- 稀有度筛选 -->
+             <ScrollView Orientation="Horizontal"
+                         HorizontalScrollBarVisibility="Never">
+                 <HorizontalStackLayout Spacing="8"
+                                        BindableLayout.ItemsSource="{Binding Rarities}">
+                     <BindableLayout.ItemTemplate>
+                         <DataTemplate x:DataType="x:String">
+                             <Button Text="{Binding .}"
+                                     FontSize="{DynamicResource FontSize13}"
+                                     HeightRequest="32"
+                                     Padding="12,0"
+                                     CornerRadius="16"
+                                     Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:CatalogViewModel}}, Path=FilterRarityCommand}"
+                                     CommandParameter="{Binding .}"
+                                     AutomationId="BtnRarityFilter"
+                                     SemanticProperties.Description="{Binding .}"
+                                     SemanticProperties.Hint="点击按稀有度筛选" />
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </HorizontalStackLayout>
+            </ScrollView>
+
+            <!-- 口味筛选 -->
+            <Picker Title="口味筛选"
+                    ItemsSource="{Binding Tastes}"
+                    SelectedItem="{Binding SelectedTaste}"
+                    FontSize="{DynamicResource FontSize14}"
+                    HeightRequest="40"
+                    AutomationId="PickerTaste"
+                    SemanticProperties.Description="口味筛选"
+                    SemanticProperties.Hint="选择口味进行筛选" />
+        </VerticalStackLayout>
+
+        <!-- 筛选展开/收起 + 显示模式切换 -->
+        <Grid Grid.Row="2"
+              ColumnDefinitions="Auto,*,Auto,Auto"
+              Margin="16,8"
+              ColumnSpacing="8">
+            <Border Grid.Column="0"
+                    WidthRequest="36"
+                    HeightRequest="36"
+                    StrokeShape="RoundRectangle 8"
+                    BackgroundColor="{DynamicResource PrimaryLight}"
+                    StrokeThickness="0"
+                    VerticalOptions="Center">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding ToggleFilterCommand}" />
+                </Border.GestureRecognizers>
+                <Label FontFamily="fa-solid-900"
+                       Text="&#xf0b7;"
+                       FontSize="{DynamicResource FontSize14}"
+                       TextColor="{DynamicResource Primary}"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       AutomationId="BtnToggleFilter"
+                       SemanticProperties.Description="筛选条件"
+                       SemanticProperties.Hint="点击展开或收起筛选条件" />
+            </Border>
+
+            <Label Grid.Column="1"
+                   Text="{Binding FilterResultText}"
+                   FontSize="{DynamicResource FontSize13}"
+                   TextColor="{DynamicResource TextSecondary}"
+                   VerticalOptions="Center"
+                   Margin="8,0,0,0" />
+
+             <!-- 九宫格视图按钮 -->
+             <Border Grid.Column="2"
+                     WidthRequest="36"
+                     HeightRequest="36"
+                     StrokeShape="RoundRectangle 8"
+                     StrokeThickness="0"
+                     VerticalOptions="Center">
+                 <Border.GestureRecognizers>
+                     <TapGestureRecognizer Command="{Binding SwitchToGridCommand}" />
+                 </Border.GestureRecognizers>
+                 <Border.BackgroundColor>
+                     <Binding Path="IsGridMode">
+                         <Binding.Converter>
+                             <converters:BoolToColorConverter x:Key="GridActiveConverter"
+                                                              TrueColor="{StaticResource Primary}"
+                                                              FalseColor="{StaticResource PrimaryLight}" />
+                         </Binding.Converter>
+                     </Binding>
+                 </Border.BackgroundColor>
+                 <Label FontFamily="fa-solid-900"
+                        Text="&#xf00a;"
+                        FontSize="{DynamicResource FontSize14}"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"
+                        AutomationId="BtnGridView"
+                        SemanticProperties.Description="九宫格视图"
+                        SemanticProperties.Hint="切换到九宫格视图">
+                     <Label.TextColor>
+                         <Binding Path="IsGridMode">
+                             <Binding.Converter>
+                                 <converters:BoolToColorConverter x:Key="GridTextConverter"
+                                                                  TrueColor="White"
+                                                                  FalseColor="{StaticResource Primary}" />
+                             </Binding.Converter>
+                         </Binding>
+                     </Label.TextColor>
+                 </Label>
+             </Border>
+
+             <!-- 列表视图按钮 -->
+             <Border Grid.Column="3"
+                     WidthRequest="36"
+                     HeightRequest="36"
+                     StrokeShape="RoundRectangle 8"
+                     StrokeThickness="0"
+                     VerticalOptions="Center">
+                 <Border.GestureRecognizers>
+                     <TapGestureRecognizer Command="{Binding SwitchToListCommand}" />
+                 </Border.GestureRecognizers>
+                 <Border.BackgroundColor>
+                     <Binding Path="IsListMode">
+                         <Binding.Converter>
+                             <converters:BoolToColorConverter x:Key="ListActiveConverter"
+                                                              TrueColor="{StaticResource Primary}"
+                                                              FalseColor="{StaticResource PrimaryLight}" />
+                         </Binding.Converter>
+                     </Binding>
+                 </Border.BackgroundColor>
+                 <Label FontFamily="fa-solid-900"
+                        Text="&#xf00b;"
+                        FontSize="{DynamicResource FontSize14}"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"
+                        AutomationId="BtnListView"
+                        SemanticProperties.Description="列表视图"
+                        SemanticProperties.Hint="切换到列表视图">
+                     <Label.TextColor>
+                         <Binding Path="IsListMode">
+                             <Binding.Converter>
+                                 <converters:BoolToColorConverter x:Key="ListTextConverter"
+                                                                  TrueColor="White"
+                                                                  FalseColor="{StaticResource Primary}" />
+                             </Binding.Converter>
+                         </Binding>
+                     </Label.TextColor>
+                 </Label>
+             </Border>
+        </Grid>
+
+        <!-- 九宫格视图（纯图片） -->
+        <RefreshView Grid.Row="3"
+                     Grid.RowSpan="2"
+                     Command="{Binding LoadCommand}"
+                     IsRefreshing="{Binding IsRefreshing}"
+                     IsVisible="{Binding IsGridMode}"
+                     AutomationId="CatalogRefreshView">
+            <CollectionView x:Name="PhotoGrid"
+                            ItemsSource="{Binding FilteredEntries}"
+                            Margin="4,0"
+                            AutomationId="PhotoCollectionView"
+                            SemanticProperties.Description="九宫格图鉴">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <controls:CatalogPhotoCard Margin="4"
+                                                   TapCommand="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:CatalogViewModel}}, Path=GoToEntryDetailCommand}"
+                                                   AutomationId="PhotoCard" />
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+
+        <!-- 列表视图（卡片详情） -->
+        <RefreshView Grid.Row="3"
+                     Grid.RowSpan="2"
+                     Command="{Binding LoadCommand}"
+                     IsRefreshing="{Binding IsRefreshing}"
+                     IsVisible="{Binding IsListMode}"
+                     AutomationId="CatalogRefreshViewList">
+            <CollectionView x:Name="CatalogList"
+                            ItemsSource="{Binding FilteredEntries}"
+                            Margin="8,0"
+                            AutomationId="CatalogCollectionView"
+                            SemanticProperties.Description="图鉴列表">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <controls:CatalogGridCard Margin="8"
+                                                   TapCommand="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:CatalogViewModel}}, Path=GoToEntryDetailCommand}"
+                                                   AutomationId="CatalogCard" />
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+
+        <!-- 底部：录入新条目按钮 -->
+        <Button Grid.Row="5"
+                Text="+ 录入新条目"
+                FontSize="{DynamicResource FontSize16}"
+                FontAttributes="Bold"
+                TextColor="White"
+                BackgroundColor="{DynamicResource Primary}"
+                Command="{Binding GoToNewEntryCommand}"
+                Margin="16,8"
+                HeightRequest="48"
+                CornerRadius="24"
+                AutomationId="BtnAddEntry"
+                SemanticProperties.Description="录入新条目"
+                SemanticProperties.Hint="点击录入新的图鉴条目" />
+
+    </Grid>
+</ContentPage>

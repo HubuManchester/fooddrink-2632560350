@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:FlavorVault.ViewModels"
+             xmlns:converters="clr-namespace:FlavorVault.Converters"
+             x:Class="FlavorVault.Views.EntryDetailPage"
+             x:DataType="viewmodels:EntryDetailViewModel"
+             Title="图鉴详情"
+             BackgroundColor="{DynamicResource Background}">
+
+    <ContentPage.Resources>
+        <converters:StringToUriConverter x:Key="StringToUriConverter" />
+        <converters:StringNotNullConverter x:Key="StringNotNullConverter" />
+        <converters:RarityToColorConverter x:Key="RarityToColorConverter" />
+        <converters:RatingToStarConverter x:Key="RatingToStarConverter" />
+        <converters:NotNullConverter x:Key="NotNullConverter" />
+        <converters:NullToBoolConverter x:Key="NullToBoolConverter" />
+        <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
+        <converters:PriceRangeToStringConverter x:Key="PriceRangeToStringConverter" />
+        <converters:BoolToColorConverter x:Key="ShowcaseColorConverter"
+                                         TrueColor="#FFB300"
+                                         FalseColor="#9E9E9E" />
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="280,*,Auto">
+
+        <!-- 顶部大图区域 -->
+        <Grid Grid.Row="0"
+              HeightRequest="280">
+            <!-- 底层占位 -->
+            <Border BackgroundColor="{DynamicResource PrimaryLight}"
+                    StrokeThickness="0">
+                <VerticalStackLayout HorizontalOptions="Center"
+                                     VerticalOptions="Center"
+                                     Spacing="8">
+                    <Label FontFamily="fa-solid-900"
+                           Text="&#xf0f5;"
+                           FontSize="{DynamicResource FontSize48}"
+                           TextColor="{DynamicResource TextSecondary}"
+                           HorizontalOptions="Center" />
+                    <Label Text="暂无图片"
+                           FontSize="{DynamicResource FontSize14}"
+                           TextColor="{DynamicResource TextSecondary}"
+                           HorizontalOptions="Center" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- 上层图片 -->
+            <Image Source="{Binding Entry.ImagePath, Converter={StaticResource StringToUriConverter}}"
+                   Aspect="AspectFill"
+                   HorizontalOptions="Fill"
+                   VerticalOptions="Fill" />
+
+            <!-- 左上角返回按钮 -->
+            <Border HorizontalOptions="Start"
+                    VerticalOptions="Start"
+                    Margin="16,16"
+                    WidthRequest="40"
+                    HeightRequest="40"
+                    StrokeShape="RoundRectangle 20"
+                    BackgroundColor="#80000000"
+                    StrokeThickness="0">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding GoBackCommand}" />
+                </Border.GestureRecognizers>
+                <Label FontFamily="fa-solid-900"
+                       Text="&#xf060;"
+                       FontSize="{DynamicResource FontSize16}"
+                       TextColor="White"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       AutomationId="BtnBack"
+                       SemanticProperties.Description="返回"
+                       SemanticProperties.Hint="点击返回上一页" />
+            </Border>
+
+            <!-- 右上角橱窗展示切换 -->
+            <Border HorizontalOptions="End"
+                    VerticalOptions="Start"
+                    Margin="16,16"
+                    WidthRequest="40"
+                    HeightRequest="40"
+                    StrokeShape="RoundRectangle 20"
+                    BackgroundColor="#80000000"
+                    StrokeThickness="0">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding ToggleShowcaseCommand}" />
+                </Border.GestureRecognizers>
+                <Label FontFamily="fa-solid-900"
+                       Text="&#xf091;"
+                       FontSize="{DynamicResource FontSize16}"
+                       TextColor="{Binding Entry.IsShowcase, Converter={StaticResource ShowcaseColorConverter}}"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       AutomationId="BtnShowcase"
+                       SemanticProperties.Description="橱窗展示"
+                       SemanticProperties.Hint="点击切换橱窗展示状态" />
+            </Border>
+
+            <!-- 底部叠加：图鉴编号 + 稀有度 -->
+            <Border VerticalOptions="End"
+                    HorizontalOptions="Fill"
+                    BackgroundColor="#80000000"
+                    StrokeThickness="0"
+                    Padding="16,8">
+                <Grid ColumnDefinitions="Auto,*,Auto">
+                    <Label Grid.Column="0"
+                           Text="{Binding Entry.CatalogNumber}"
+                           FontSize="{DynamicResource FontSize14}"
+                           FontAttributes="Bold"
+                           TextColor="White"
+                           VerticalOptions="Center"
+                           SemanticProperties.Description="{Binding Entry.CatalogNumber}" />
+
+                    <Border Grid.Column="2"
+                            StrokeShape="RoundRectangle 4"
+                            BackgroundColor="{Binding Entry.Rarity, Converter={StaticResource RarityToColorConverter}}"
+                            StrokeThickness="0"
+                            Padding="12,4">
+                        <Label Text="{Binding Entry.Rarity}"
+                               FontSize="{DynamicResource FontSize14}"
+                               FontAttributes="Bold"
+                               TextColor="White"
+                               SemanticProperties.Description="{Binding Entry.Rarity}" />
+                    </Border>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- 滚动内容区 -->
+        <ScrollView Grid.Row="1"
+                    Padding="16,16,16,8">
+            <VerticalStackLayout Spacing="20">
+
+                <!-- 信息区 -->
+                <VerticalStackLayout Spacing="12">
+                    <!-- 食物名称 -->
+                    <Label Text="{Binding Entry.Name}"
+                           FontSize="{DynamicResource FontSize24}"
+                           FontAttributes="Bold"
+                           TextColor="{DynamicResource TextPrimary}"
+                           SemanticProperties.Description="{Binding Entry.Name}" />
+
+                    <!-- 标签行 -->
+                    <HorizontalStackLayout Spacing="8">
+                        <Border StrokeShape="RoundRectangle 12"
+                                BackgroundColor="{DynamicResource PrimaryLight}"
+                                StrokeThickness="0"
+                                Padding="10,4">
+                            <Label Text="{Binding Entry.Region}"
+                                   FontSize="{DynamicResource FontSize12}"
+                                   TextColor="{DynamicResource Primary}"
+                                   SemanticProperties.Description="{Binding Entry.Region}" />
+                        </Border>
+                        <Border StrokeShape="RoundRectangle 12"
+                                BackgroundColor="{DynamicResource PrimaryLight}"
+                                StrokeThickness="0"
+                                Padding="10,4"
+                                IsVisible="{Binding Entry.PrimaryTaste, Converter={StaticResource StringNotNullConverter}}">
+                            <Label Text="{Binding Entry.PrimaryTaste}"
+                                   FontSize="{DynamicResource FontSize12}"
+                                   TextColor="{DynamicResource Primary}" />
+                        </Border>
+                        <Border StrokeShape="RoundRectangle 12"
+                                BackgroundColor="{DynamicResource PrimaryLight}"
+                                StrokeThickness="0"
+                                Padding="10,4">
+                            <Label Text="{Binding Entry.PriceRange, Converter={StaticResource PriceRangeToStringConverter}}"
+                                   FontSize="{DynamicResource FontSize12}"
+                                   TextColor="{DynamicResource Primary}" />
+                        </Border>
+                    </HorizontalStackLayout>
+
+                    <!-- 星级显示 -->
+                    <HorizontalStackLayout Spacing="4"
+                                           VerticalOptions="Center">
+                        <Label FontFamily="fa-solid-900"
+                               Text="{Binding Entry.StarRating, Converter={StaticResource RatingToStarConverter}, ConverterParameter=1}"
+                               FontSize="{DynamicResource FontSize20}"
+                               TextColor="#FFB300" />
+                        <Label FontFamily="fa-solid-900"
+                               Text="{Binding Entry.StarRating, Converter={StaticResource RatingToStarConverter}, ConverterParameter=2}"
+                               FontSize="{DynamicResource FontSize20}"
+                               TextColor="#FFB300" />
+                        <Label FontFamily="fa-solid-900"
+                               Text="{Binding Entry.StarRating, Converter={StaticResource RatingToStarConverter}, ConverterParameter=3}"
+                               FontSize="{DynamicResource FontSize20}"
+                               TextColor="#FFB300" />
+                        <Label FontFamily="fa-solid-900"
+                               Text="{Binding Entry.StarRating, Converter={StaticResource RatingToStarConverter}, ConverterParameter=4}"
+                               FontSize="{DynamicResource FontSize20}"
+                               TextColor="#FFB300" />
+                        <Label FontFamily="fa-solid-900"
+                               Text="{Binding Entry.StarRating, Converter={StaticResource RatingToStarConverter}, ConverterParameter=5}"
+                               FontSize="{DynamicResource FontSize20}"
+                               TextColor="#FFB300" />
+                        <Label Text="{Binding Entry.StarRating, StringFormat='{0} 星'}"
+                               FontSize="{DynamicResource FontSize14}"
+                               TextColor="{DynamicResource TextSecondary}"
+                               VerticalOptions="Center"
+                               Margin="8,0,0,0" />
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+
+                <!-- 三行属性表 -->
+                <Border BackgroundColor="{DynamicResource Surface}"
+                        StrokeShape="RoundRectangle 12"
+                        StrokeThickness="0"
+                        Padding="16">
+                    <Border.Shadow>
+                        <Shadow Brush="#15000000"
+                                Offset="0,2"
+                                Radius="6" />
+                    </Border.Shadow>
+                    <VerticalStackLayout Spacing="12">
+                        <!-- 香气 -->
+                        <Grid ColumnDefinitions="Auto,*"
+                              ColumnSpacing="12">
+                            <Label Grid.Column="0"
+                                   FontFamily="fa-solid-900"
+                                   Text="&#xf06c;"
+                                   FontSize="{DynamicResource FontSize16}"
+                                   TextColor="{DynamicResource Primary}"
+                                   VerticalOptions="Center"
+                                   AutomationId="IconAroma"
+                                   SemanticProperties.Description="香气" />
+                            <Label Grid.Column="1"
+                                   Text="{Binding Entry.AromaTag}"
+                                   FontSize="{DynamicResource FontSize14}"
+                                   TextColor="{DynamicResource TextPrimary}"
+                                   VerticalOptions="Center" />
+                        </Grid>
+
+                        <BoxView HeightRequest="1"
+                                 Color="{DynamicResource PrimaryLight}" />
+
+                        <!-- 口感 -->
+                        <Grid ColumnDefinitions="Auto,*"
+                              ColumnSpacing="12">
+                            <Label Grid.Column="0"
+                                   FontFamily="fa-solid-900"
+                                   Text="&#xf005;"
+                                   FontSize="{DynamicResource FontSize16}"
+                                   TextColor="{DynamicResource Primary}"
+                                   VerticalOptions="Center"
+                                   AutomationId="IconTexture"
+                                   SemanticProperties.Description="口感" />
+                            <Label Grid.Column="1"
+                                   Text="{Binding Entry.TextureTag}"
+                                   FontSize="{DynamicResource FontSize14}"
+                                   TextColor="{DynamicResource TextPrimary}"
+                                   VerticalOptions="Center" />
+                        </Grid>
+
+                        <BoxView HeightRequest="1"
+                                 Color="{DynamicResource PrimaryLight}" />
+
+                        <!-- 主要食材 -->
+                        <Grid ColumnDefinitions="Auto,*"
+                              ColumnSpacing="12">
+                            <Label Grid.Column="0"
+                                   FontFamily="fa-solid-900"
+                                   Text="&#xf0c4;"
+                                   FontSize="{DynamicResource FontSize16}"
+                                   TextColor="{DynamicResource Primary}"
+                                   VerticalOptions="Center"
+                                   AutomationId="IconIngredients"
+                                   SemanticProperties.Description="食材" />
+                            <Label Grid.Column="1"
+                                   Text="{Binding IngredientsText}"
+                                   FontSize="{DynamicResource FontSize13}"
+                                   TextColor="{DynamicResource TextSecondary}"
+                                   VerticalOptions="Center"
+                                   LineBreakMode="WordWrap" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- 简介区 -->
+                <VerticalStackLayout Spacing="8"
+                                     IsVisible="{Binding Entry.Description, Converter={StaticResource StringNotNullConverter}}">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Grid.Column="0"
+                               Text="食物简介"
+                               FontSize="{DynamicResource FontSize16}"
+                               FontAttributes="Bold"
+                               TextColor="{DynamicResource TextPrimary}"
+                               SemanticProperties.Description="食物简介" />
+                        <Border Grid.Column="1"
+                                WidthRequest="36"
+                                HeightRequest="36"
+                                StrokeShape="RoundRectangle 18"
+                                BackgroundColor="{DynamicResource PrimaryLight}"
+                                StrokeThickness="0">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding ToggleSpeakingCommand}" />
+                            </Border.GestureRecognizers>
+                            <Label FontFamily="fa-solid-900"
+                                   Text="&#xf028;"
+                                   FontSize="{DynamicResource FontSize14}"
+                                   TextColor="{DynamicResource Primary}"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center"
+                                   AutomationId="BtnSpeakDesc"
+                                   SemanticProperties.Description="朗读简介"
+                                   SemanticProperties.Hint="点击朗读食物简介" />
+                        </Border>
+                    </Grid>
+                    <Label Text="{Binding Entry.Description}"
+                           FontSize="{DynamicResource FontSize14}"
+                           TextColor="{DynamicResource TextSecondary}"
+                           LineHeight="1.6"
+                           LineBreakMode="WordWrap" />
+                </VerticalStackLayout>
+
+                <!-- 收藏备注区 -->
+                <VerticalStackLayout Spacing="8"
+                                     IsVisible="{Binding Entry.NoteText, Converter={StaticResource StringNotNullConverter}}">
+                    <Label Text="收藏备注"
+                           FontSize="{DynamicResource FontSize16}"
+                           FontAttributes="Bold"
+                           TextColor="{DynamicResource TextPrimary}"
+                           SemanticProperties.Description="收藏备注" />
+                    <Label Text="{Binding Entry.NoteText}"
+                           FontSize="{DynamicResource FontSize14}"
+                           TextColor="{DynamicResource TextSecondary}"
+                           LineHeight="1.6"
+                           LineBreakMode="WordWrap" />
+
+                    <!-- 语音备注 -->
+                    <VerticalStackLayout Spacing="4"
+                                         IsVisible="{Binding Entry.VoiceNoteText, Converter={StaticResource StringNotNullConverter}}">
+                        <Label Text="语音备注"
+                               FontSize="{DynamicResource FontSize13}"
+                               FontAttributes="Bold"
+                               TextColor="{DynamicResource TextSecondary}" />
+                        <Label Text="{Binding Entry.VoiceNoteText}"
+                               FontSize="{DynamicResource FontSize13}"
+                               TextColor="{DynamicResource TextSecondary}"
+                               LineBreakMode="WordWrap"
+                               FontAttributes="Italic" />
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+
+                <!-- 发现地点 -->
+                <VerticalStackLayout Spacing="8"
+                                     IsVisible="{Binding Entry.LocationName, Converter={StaticResource StringNotNullConverter}}">
+                    <Label Text="发现地点"
+                           FontSize="{DynamicResource FontSize16}"
+                           FontAttributes="Bold"
+                           TextColor="{DynamicResource TextPrimary}"
+                           SemanticProperties.Description="发现地点" />
+                    <Border BackgroundColor="{DynamicResource Surface}"
+                            StrokeShape="RoundRectangle 12"
+                            StrokeThickness="0"
+                            Padding="16">
+                        <Border.Shadow>
+                            <Shadow Brush="#10000000"
+                                    Offset="0,1"
+                                    Radius="4" />
+                        </Border.Shadow>
+                        <Grid ColumnDefinitions="Auto,*"
+                              ColumnSpacing="12">
+                            <Label Grid.Column="0"
+                                   FontFamily="fa-solid-900"
+                                   Text="&#xf3c5;"
+                                   FontSize="{DynamicResource FontSize20}"
+                                   TextColor="{DynamicResource Primary}"
+                                   VerticalOptions="Center"
+                                   AutomationId="IconLocation"
+                                   SemanticProperties.Description="地点标记" />
+                            <VerticalStackLayout Grid.Column="1"
+                                                 VerticalOptions="Center">
+                                <Label Text="{Binding Entry.LocationName}"
+                                       FontSize="{DynamicResource FontSize14}"
+                                       FontAttributes="Bold"
+                                       TextColor="{DynamicResource TextPrimary}" />
+                                <Label Text="{Binding CoordinatesText}"
+                                       FontSize="{DynamicResource FontSize12}"
+                                       TextColor="{DynamicResource TextSecondary}"
+                                       FontFamily="monospace" />
+                            </VerticalStackLayout>
+                        </Grid>
+                    </Border>
+                </VerticalStackLayout>
+
+                <!-- 底部间距 -->
+                <BoxView HeightRequest="16" />
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- 底部操作栏 -->
+        <Border Grid.Row="2"
+                BackgroundColor="{DynamicResource Surface}"
+                StrokeThickness="0"
+                Padding="16,12"
+                HorizontalOptions="Fill">
+            <Border.Shadow>
+                <Shadow Brush="#20000000"
+                        Offset="0,-2"
+                        Radius="8" />
+            </Border.Shadow>
+            <Grid ColumnDefinitions="*,*,*"
+                  ColumnSpacing="12">
+                <!-- 朗读/停止 -->
+                <Button Grid.Column="0"
+                        Text="{Binding SpeakButtonText}"
+                        FontSize="{DynamicResource FontSize14}"
+                        TextColor="White"
+                        BackgroundColor="{DynamicResource Primary}"
+                        Command="{Binding ToggleSpeakingCommand}"
+                        CornerRadius="8"
+                        HeightRequest="44"
+                        AutomationId="BtnToggleSpeak"
+                        SemanticProperties.Description="{Binding SpeakButtonText}"
+                        SemanticProperties.Hint="点击朗读或停止朗读" />
+
+                <!-- 编辑 -->
+                <Button Grid.Column="1"
+                        Text="编辑"
+                        FontSize="{DynamicResource FontSize14}"
+                        TextColor="{DynamicResource Primary}"
+                        BackgroundColor="{DynamicResource PrimaryLight}"
+                        Command="{Binding EditCommand}"
+                        CornerRadius="8"
+                        HeightRequest="44"
+                        AutomationId="BtnEdit"
+                        SemanticProperties.Description="编辑"
+                        SemanticProperties.Hint="点击编辑此条目" />
+
+                <!-- 更改收藏状态 -->
+                <Button Grid.Column="2"
+                        Text="{Binding CollectStatusText}"
+                        FontSize="{DynamicResource FontSize14}"
+                        TextColor="White"
+                        BackgroundColor="{DynamicResource Accent}"
+                        Command="{Binding ChangeCollectStatusCommand}"
+                        CornerRadius="8"
+                        HeightRequest="44"
+                        AutomationId="BtnCollectStatus"
+                        SemanticProperties.Description="{Binding CollectStatusText}"
+                        SemanticProperties.Hint="点击更改收藏状态" />
+            </Grid>
+        </Border>
+
+    </Grid>
+</ContentPage>

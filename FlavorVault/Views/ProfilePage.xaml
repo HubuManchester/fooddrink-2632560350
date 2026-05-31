@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:FlavorVault.ViewModels"
+             xmlns:models="clr-namespace:FlavorVault.Models"
+             xmlns:converters="clr-namespace:FlavorVault.Converters"
+             x:Class="FlavorVault.Views.ProfilePage"
+             x:DataType="viewmodels:ProfileViewModel"
+             Title="我的"
+              BackgroundColor="{DynamicResource Background}">
+
+    <ContentPage.Resources>
+        <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="16" Padding="16" VerticalOptions="Start">
+
+            <!-- ========== 用户信息区 ========== -->
+            <Border StrokeShape="RoundRectangle 12" StrokeThickness="0"
+                    BackgroundColor="{DynamicResource Surface}" Padding="16">
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="16">
+                    <Border Grid.Column="0"
+                            BackgroundColor="{DynamicResource PrimaryLight}"
+                            StrokeShape="RoundRectangle 36"
+                            StrokeThickness="0"
+                            WidthRequest="64" HeightRequest="64"
+                            HorizontalOptions="Start" VerticalOptions="Center">
+                        <Label Text="&#xf007;"
+                               FontFamily="fa-solid-900" FontSize="{DynamicResource FontSize24}"
+                               TextColor="{DynamicResource Primary}"
+                               HorizontalOptions="Center" VerticalOptions="Center" />
+                    </Border>
+                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="4">
+                        <Label Text="{Binding LoginUsername}"
+                               FontSize="{DynamicResource FontSize20}" FontAttributes="Bold"
+                               TextColor="{DynamicResource TextPrimary}"
+                               IsVisible="{Binding IsLoggedIn}" />
+                        <Label Text="未登录"
+                                FontSize="{DynamicResource FontSize18}" FontAttributes="Bold"
+                                TextColor="{DynamicResource TextSecondary}"
+                                IsVisible="{Binding IsLoggedIn, Converter={StaticResource InverseBoolConverter}}" />
+                        <Button Text="&#xf2f6; 登录"
+                                FontFamily="fa-solid-900"
+                                FontSize="{DynamicResource FontSize12}"
+                                BackgroundColor="{DynamicResource Primary}"
+                                TextColor="White"
+                                Padding="12,4"
+                                HeightRequest="32"
+                                HorizontalOptions="Start"
+                                Command="{Binding GoToLoginCommand}"
+                                IsVisible="{Binding IsLoggedIn, Converter={StaticResource InverseBoolConverter}}" />
+                        <Label Text="账号昵称"
+                               FontSize="{DynamicResource FontSize11}" TextColor="{DynamicResource TextSecondary}" />
+                        <Entry Text="{Binding UserName, Mode=TwoWay}"
+                               Placeholder="输入你的名字"
+                               FontSize="{DynamicResource FontSize14}"
+                               TextColor="{DynamicResource TextPrimary}"
+                               BackgroundColor="Transparent" />
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
+
+            <!-- ========== 图鉴档案统计（6格网格） ========== -->
+            <Border StrokeShape="RoundRectangle 12" StrokeThickness="0"
+                    BackgroundColor="{DynamicResource Surface}" Padding="12">
+                <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="*,*,*"
+                      RowSpacing="12" ColumnSpacing="8">
+                    <!-- 标题 -->
+                    <Label Grid.Row="0" Grid.ColumnSpan="3" Text="图鉴档案"
+                           FontSize="{DynamicResource FontSize16}" FontAttributes="Bold"
+                           TextColor="{DynamicResource TextPrimary}" />
+
+                    <!-- 总条目 -->
+                    <VerticalStackLayout Grid.Row="1" Grid.Column="0" Spacing="2" HorizontalOptions="Center">
+                        <Label Text="{Binding TotalEntries}" FontSize="{DynamicResource FontSize24}" FontAttributes="Bold"
+                               TextColor="{DynamicResource Primary}" HorizontalOptions="Center" />
+                        <Label Text="总条目" FontSize="{DynamicResource FontSize10}" TextColor="{DynamicResource TextSecondary}" HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+                    <!-- 已收录 -->
+                    <VerticalStackLayout Grid.Row="1" Grid.Column="1" Spacing="2" HorizontalOptions="Center">
+                        <Label Text="{Binding CollectedCount}" FontSize="{DynamicResource FontSize24}" FontAttributes="Bold"
+                               TextColor="#4CAF50" HorizontalOptions="Center" />
+                        <Label Text="已收录" FontSize="{DynamicResource FontSize10}" TextColor="{DynamicResource TextSecondary}" HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+                    <!-- 想尝试 -->
+                    <VerticalStackLayout Grid.Row="1" Grid.Column="2" Spacing="2" HorizontalOptions="Center">
+                        <Label Text="{Binding WantToTryCount}" FontSize="{DynamicResource FontSize24}" FontAttributes="Bold"
+                               TextColor="#FF9800" HorizontalOptions="Center" />
+                        <Label Text="想尝试" FontSize="{DynamicResource FontSize10}" TextColor="{DynamicResource TextSecondary}" HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+
+                    <!-- 橱窗精选 -->
+                    <VerticalStackLayout Grid.Row="2" Grid.Column="0" Spacing="2" HorizontalOptions="Center">
+                        <Label Text="{Binding ShowcaseCount}" FontSize="{DynamicResource FontSize24}" FontAttributes="Bold"
+                               TextColor="#FFB300" HorizontalOptions="Center" />
+                        <Label Text="橱窗精选" FontSize="{DynamicResource FontSize10}" TextColor="{DynamicResource TextSecondary}" HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+                    <!-- 收藏集 -->
+                    <VerticalStackLayout Grid.Row="2" Grid.Column="1" Spacing="2" HorizontalOptions="Center">
+                        <Label Text="{Binding CollectionCount}" FontSize="{DynamicResource FontSize24}" FontAttributes="Bold"
+                               TextColor="#2196F3" HorizontalOptions="Center" />
+                        <Label Text="收藏集" FontSize="{DynamicResource FontSize10}" TextColor="{DynamicResource TextSecondary}" HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+                    <!-- 地点标记 -->
+                    <VerticalStackLayout Grid.Row="2" Grid.Column="2" Spacing="2" HorizontalOptions="Center">
+                        <Label Text="{Binding PlaceMarkCount}" FontSize="{DynamicResource FontSize24}" FontAttributes="Bold"
+                               TextColor="#9C27B0" HorizontalOptions="Center" />
+                        <Label Text="地点标记" FontSize="{DynamicResource FontSize10}" TextColor="{DynamicResource TextSecondary}" HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
+
+            <!-- ========== 地区收录进度 ========== -->
+            <Border StrokeShape="RoundRectangle 12" StrokeThickness="0"
+                    BackgroundColor="{DynamicResource Surface}" Padding="16">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="地区收录进度" FontSize="{DynamicResource FontSize16}" FontAttributes="Bold"
+                           TextColor="{DynamicResource TextPrimary}" />
+                    <CollectionView ItemsSource="{Binding RegionProgressList}"
+                                    SelectionMode="None"
+                                    HeightRequest="210">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:RegionProgress">
+                                <Grid ColumnDefinitions="55,*,40" HeightRequest="22" Margin="0,1">
+                                    <Label Grid.Column="0" Text="{Binding Region}"
+                                           FontSize="{DynamicResource FontSize12}" TextColor="{DynamicResource TextSecondary}"
+                                           VerticalOptions="Center" />
+                                    <ProgressBar Grid.Column="1"
+                                                 Progress="{Binding ProgressPercent}"
+                                                 ProgressColor="{DynamicResource Primary}"
+                                                 VerticalOptions="Center" HeightRequest="6" />
+                                    <Label Grid.Column="2" Text="{Binding ProgressText}"
+                                           FontSize="{DynamicResource FontSize11}" TextColor="{DynamicResource TextSecondary}"
+                                           VerticalOptions="Center" HorizontalOptions="End" />
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- ========== 设置区 ========== -->
+            <Border StrokeShape="RoundRectangle 12" StrokeThickness="0"
+                    BackgroundColor="{DynamicResource Surface}" Padding="16">
+                <VerticalStackLayout Spacing="14">
+                    <Label Text="设置" FontSize="{DynamicResource FontSize16}" FontAttributes="Bold"
+                           TextColor="{DynamicResource TextPrimary}" />
+
+                    <!-- 主题切换 -->
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="主题模式" FontSize="{DynamicResource FontSize13}" TextColor="{DynamicResource TextSecondary}" />
+                        <HorizontalStackLayout Spacing="8">
+                            <Button Text="浅色" Command="{Binding SetThemeCommand}" CommandParameter="Light"
+                                    FontSize="{DynamicResource FontSize13}" Padding="16,4" HeightRequest="34" CornerRadius="17" />
+                            <Button Text="深色" Command="{Binding SetThemeCommand}" CommandParameter="Dark"
+                                    FontSize="{DynamicResource FontSize13}" Padding="16,4" HeightRequest="34" CornerRadius="17" />
+                            <Button Text="跟随系统" Command="{Binding SetThemeCommand}" CommandParameter="System"
+                                    FontSize="{DynamicResource FontSize13}" Padding="16,4" HeightRequest="34" CornerRadius="17" />
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+
+                    <!-- 字体大小 -->
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="字体大小" FontSize="{DynamicResource FontSize13}" TextColor="{DynamicResource TextSecondary}" />
+                        <HorizontalStackLayout Spacing="8">
+                            <Button Text="S" Command="{Binding SetFontSizeCommand}" CommandParameter="Small"
+                                    FontSize="{DynamicResource FontSize13}" Padding="14,4" HeightRequest="34" CornerRadius="17" />
+                            <Button Text="M" Command="{Binding SetFontSizeCommand}" CommandParameter="Medium"
+                                    FontSize="{DynamicResource FontSize13}" Padding="14,4" HeightRequest="34" CornerRadius="17" />
+                            <Button Text="L" Command="{Binding SetFontSizeCommand}" CommandParameter="Large"
+                                    FontSize="{DynamicResource FontSize13}" Padding="14,4" HeightRequest="34" CornerRadius="17" />
+                            <Button Text="XL" Command="{Binding SetFontSizeCommand}" CommandParameter="ExtraLarge"
+                                    FontSize="{DynamicResource FontSize13}" Padding="14,4" HeightRequest="34" CornerRadius="17" />
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+
+                    <BoxView HeightRequest="1" BackgroundColor="{DynamicResource Divider}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- ========== 功能列表 ========== -->
+            <Border StrokeShape="RoundRectangle 12" StrokeThickness="0"
+                    BackgroundColor="{DynamicResource Surface}" Padding="4">
+                <VerticalStackLayout>
+                    <!-- 语音输入测试 -->
+                    <Grid ColumnDefinitions="40,*,Auto" Padding="12,12" HeightRequest="48">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding TestVoiceInputCommand}" />
+                        </Grid.GestureRecognizers>
+                        <Label Grid.Column="0" Text="&#xf130;" FontFamily="fa-solid-900"
+                               FontSize="{DynamicResource FontSize16}" TextColor="{DynamicResource Primary}"
+                               HorizontalOptions="Center" VerticalOptions="Center" />
+                        <Label Grid.Column="1" Text="语音输入测试"
+                               FontSize="{DynamicResource FontSize15}" TextColor="{DynamicResource TextPrimary}" VerticalOptions="Center" />
+                        <Label Grid.Column="2" Text="&#xf054;" FontFamily="fa-solid-900"
+                               FontSize="{DynamicResource FontSize12}" TextColor="{DynamicResource TextSecondary}"
+                               HorizontalOptions="End" VerticalOptions="Center" />
+                    </Grid>
+                    <BoxView HeightRequest="0.5" BackgroundColor="{DynamicResource Divider}" Margin="52,0" />
+
+                    <!-- 朗读测试 -->
+                    <Grid ColumnDefinitions="40,*,Auto" Padding="12,12" HeightRequest="48">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding TestTtsCommand}" />
+                        </Grid.GestureRecognizers>
+                        <Label Grid.Column="0" Text="&#xf028;" FontFamily="fa-solid-900"
+                               FontSize="{DynamicResource FontSize16}" TextColor="{DynamicResource Primary}"
+                               HorizontalOptions="Center" VerticalOptions="Center" />
+                        <Label Grid.Column="1" Text="朗读测试"
+                               FontSize="{DynamicResource FontSize15}" TextColor="{DynamicResource TextPrimary}" VerticalOptions="Center" />
+                        <Label Grid.Column="2" Text="&#xf054;" FontFamily="fa-solid-900"
+                               FontSize="{DynamicResource FontSize12}" TextColor="{DynamicResource TextSecondary}"
+                               HorizontalOptions="End" VerticalOptions="Center" />
+                    </Grid>
+                    <BoxView HeightRequest="0.5" BackgroundColor="{DynamicResource Divider}" Margin="52,0" />
+
+                    <!-- 振动测试 -->
+                    <Grid ColumnDefinitions="40,*,Auto" Padding="12,12" HeightRequest="48">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding TestHapticCommand}" />
+                        </Grid.GestureRecognizers>
+                        <Label Grid.Column="0" Text="&#xf0f4;" FontFamily="fa-solid-900"
+                               FontSize="{DynamicResource FontSize16}" TextColor="{DynamicResource Primary}"
+                               HorizontalOptions="Center" VerticalOptions="Center" />
+                        <Label Grid.Column="1" Text="振动测试"
+                               FontSize="{DynamicResource FontSize15}" TextColor="{DynamicResource TextPrimary}" VerticalOptions="Center" />
+                        <Label Grid.Column="2" Text="&#xf054;" FontFamily="fa-solid-900"
+                               FontSize="{DynamicResource FontSize12}" TextColor="{DynamicResource TextSecondary}"
+                               HorizontalOptions="End" VerticalOptions="Center" />
+                    </Grid>
+                    <BoxView HeightRequest="0.5" BackgroundColor="{DynamicResource Divider}" Margin="52,0" />
+
+                    <!-- 附近地标 -->
+                    <Grid ColumnDefinitions="40,*,Auto" Padding="12,12" HeightRequest="48">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding GoToNearbyPlacesCommand}" />
+                        </Grid.GestureRecognizers>
+                        <Label Grid.Column="0" Text="&#xf3c5;" FontFamily="fa-solid-900"
+                               FontSize="{DynamicResource FontSize16}" TextColor="{DynamicResource Primary}"
+                               HorizontalOptions="Center" VerticalOptions="Center" />
+                        <Label Grid.Column="1" Text="附近地标"
+                               FontSize="{DynamicResource FontSize15}" TextColor="{DynamicResource TextPrimary}" VerticalOptions="Center" />
+                        <Label Grid.Column="2" Text="&#xf054;" FontFamily="fa-solid-900"
+                               FontSize="{DynamicResource FontSize12}" TextColor="{DynamicResource TextSecondary}"
+                               HorizontalOptions="End" VerticalOptions="Center" />
+                    </Grid>
+                    <BoxView HeightRequest="0.5" BackgroundColor="{DynamicResource Divider}" Margin="52,0" />
+
+                    <!-- 关于应用 -->
+                    <Grid ColumnDefinitions="40,*,Auto" Padding="12,12" HeightRequest="48">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding GoToAboutCommand}" />
+                        </Grid.GestureRecognizers>
+                        <Label Grid.Column="0" Text="&#xf05a;" FontFamily="fa-solid-900"
+                               FontSize="{DynamicResource FontSize16}" TextColor="{DynamicResource Primary}"
+                               HorizontalOptions="Center" VerticalOptions="Center" />
+                        <Label Grid.Column="1" Text="关于应用"
+                               FontSize="{DynamicResource FontSize15}" TextColor="{DynamicResource TextPrimary}" VerticalOptions="Center" />
+                        <Label Grid.Column="2" Text="&#xf054;" FontFamily="fa-solid-900"
+                               FontSize="{DynamicResource FontSize12}" TextColor="{DynamicResource TextSecondary}"
+                               HorizontalOptions="End" VerticalOptions="Center" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- ========== 账号操作 ========== -->
+            <Border StrokeShape="RoundRectangle 12" StrokeThickness="0"
+                    BackgroundColor="{DynamicResource Surface}" Padding="4"
+                    IsVisible="{Binding IsLoggedIn}">
+                <Grid ColumnDefinitions="40,*,Auto" Padding="12,12" HeightRequest="48">
+                    <Grid.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding LogoutCommand}" />
+                    </Grid.GestureRecognizers>
+                    <Label Grid.Column="0" Text="&#xf2f5;" FontFamily="fa-solid-900"
+                           FontSize="{DynamicResource FontSize16}" TextColor="#FF9800"
+                           HorizontalOptions="Center" VerticalOptions="Center" />
+                    <Label Grid.Column="1" Text="退出登录"
+                           FontSize="{DynamicResource FontSize15}" TextColor="#FF9800" VerticalOptions="Center" />
+                    <Label Grid.Column="2" Text="&#xf054;" FontFamily="fa-solid-900"
+                           FontSize="{DynamicResource FontSize12}" TextColor="#FF9800"
+                           HorizontalOptions="End" VerticalOptions="Center" />
+                </Grid>
+            </Border>
+
+            <!-- ========== 危险操作 ========== -->
+            <Border StrokeShape="RoundRectangle 12" StrokeThickness="0"
+                    BackgroundColor="{DynamicResource Surface}" Padding="4">
+                <Grid ColumnDefinitions="40,*,Auto" Padding="12,12" HeightRequest="48">
+                    <Grid.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding ResetDataCommand}" />
+                    </Grid.GestureRecognizers>
+                    <Label Grid.Column="0" Text="&#xf2ed;" FontFamily="fa-solid-900"
+                           FontSize="{DynamicResource FontSize16}" TextColor="#E53935"
+                           HorizontalOptions="Center" VerticalOptions="Center" />
+                    <Label Grid.Column="1" Text="重置所有数据"
+                           FontSize="{DynamicResource FontSize15}" TextColor="#E53935" VerticalOptions="Center" />
+                    <Label Grid.Column="2" Text="&#xf054;" FontFamily="fa-solid-900"
+                           FontSize="{DynamicResource FontSize12}" TextColor="#E53935"
+                           HorizontalOptions="End" VerticalOptions="Center" />
+                </Grid>
+            </Border>
+
+            <!-- 底部间距 -->
+            <BoxView HeightRequest="24" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+       xmlns:views="clr-namespace:FlavorVault.Views"
+       x:Class="FlavorVault.AppShell"
+       Title="味藏">
+
+    <Shell.Resources>
+        <!-- Tab图标使用FontImageSource -->
+        <FontImageSource x:Key="TabHomeIcon"
+                         Glyph="&#xf015;"
+                         FontFamily="fa-solid-900"
+                         Color="{AppThemeBinding Light={DynamicResource TextSecondary}, Dark={DynamicResource TextSecondary}}" />
+        <FontImageSource x:Key="TabCatalogIcon"
+                         Glyph="&#xf009;"
+                         FontFamily="fa-solid-900"
+                         Color="{AppThemeBinding Light={DynamicResource TextSecondary}, Dark={DynamicResource TextSecondary}}" />
+        <FontImageSource x:Key="TabWishIcon"
+                         Glyph="&#xf004;"
+                         FontFamily="fa-solid-900"
+                         Color="{AppThemeBinding Light={DynamicResource TextSecondary}, Dark={DynamicResource TextSecondary}}" />
+        <FontImageSource x:Key="TabExploreIcon"
+                         Glyph="&#xf14e;"
+                         FontFamily="fa-solid-900"
+                         Color="{AppThemeBinding Light={DynamicResource TextSecondary}, Dark={DynamicResource TextSecondary}}" />
+        <FontImageSource x:Key="TabProfileIcon"
+                         Glyph="&#xf007;"
+                         FontFamily="fa-solid-900"
+                         Color="{AppThemeBinding Light={DynamicResource TextSecondary}, Dark={DynamicResource TextSecondary}}" />
+    </Shell.Resources>
+
+    <TabBar>
+        <Tab Title="首页" Icon="{StaticResource TabHomeIcon}">
+            <ShellContent ContentTemplate="{DataTemplate views:HomePage}" Route="home" />
+        </Tab>
+        <Tab Title="图鉴" Icon="{StaticResource TabCatalogIcon}">
+            <ShellContent ContentTemplate="{DataTemplate views:CatalogPage}" Route="catalog" />
+        </Tab>
+        <Tab Title="心愿" Icon="{StaticResource TabWishIcon}">
+            <ShellContent ContentTemplate="{DataTemplate views:WishListPage}" Route="wishlist" />
+        </Tab>
+        <Tab Title="探索" Icon="{StaticResource TabExploreIcon}">
+            <ShellContent ContentTemplate="{DataTemplate views:ExplorePage}" Route="explore" />
+        </Tab>
+        <Tab Title="我的" Icon="{StaticResource TabProfileIcon}">
+            <ShellContent ContentTemplate="{DataTemplate views:ProfilePage}" Route="profile" />
+        </Tab>
+    </TabBar>
+</Shell>

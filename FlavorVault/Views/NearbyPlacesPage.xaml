@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:FlavorVault.ViewModels"
+             xmlns:converters="clr-namespace:FlavorVault.Converters"
+              xmlns:models="clr-namespace:FlavorVault.Models"
+              x:Class="FlavorVault.Views.NearbyPlacesPage"
+             x:DataType="viewmodels:NearbyPlacesViewModel"
+             Title="附近美食地点"
+             BackgroundColor="{DynamicResource Background}">
+
+    <ContentPage.Resources>
+        <converters:DistanceToStringConverter x:Key="DistanceToStringConverter" />
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,Auto,Auto,*"
+          RowSpacing="0">
+
+        <!-- 当前位置卡片 -->
+        <Border Grid.Row="0"
+                BackgroundColor="{DynamicResource Surface}"
+                StrokeShape="RoundRectangle 12"
+                StrokeThickness="0"
+                Margin="16,16,16,8"
+                Padding="16">
+            <VerticalStackLayout Spacing="8">
+                <Label Text="当前位置"
+                       FontSize="{DynamicResource FontSize16}"
+                       FontAttributes="Bold"
+                       TextColor="{DynamicResource TextPrimary}" />
+                <Label Text="{Binding CoordinatesText}"
+                       FontSize="{DynamicResource FontSize13}"
+                       FontFamily="Courier New"
+                       TextColor="{DynamicResource TextSecondary}" />
+                <Label Text="{Binding LocationStatus}"
+                       FontSize="{DynamicResource FontSize12}"
+                       TextColor="{DynamicResource TextSecondary}" />
+            </VerticalStackLayout>
+        </Border>
+
+        <!-- 地点数量统计 -->
+        <Label Grid.Row="1"
+               Text="{Binding PlaceCountText}"
+               FontSize="{DynamicResource FontSize14}"
+               TextColor="{DynamicResource TextSecondary}"
+               Margin="16,8,16,4" />
+
+        <!-- 分隔线 -->
+        <BoxView Grid.Row="2"
+                 HeightRequest="1"
+                 BackgroundColor="{DynamicResource PrimaryLight}"
+                 Margin="16,4" />
+
+        <!-- 地点列表 -->
+        <CollectionView Grid.Row="3"
+                        ItemsSource="{Binding Places}"
+                        SelectionMode="None"
+                        Margin="12,4"
+                        ItemSizingStrategy="MeasureFirstItem">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:NearbyPlace">
+                    <Border BackgroundColor="{DynamicResource Surface}"
+                            StrokeShape="RoundRectangle 12"
+                            StrokeThickness="0"
+                            Margin="4,4"
+                            Padding="12">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:NearbyPlacesViewModel}}, Path=OpenMapCommand}"
+                                                   CommandParameter="{Binding}" />
+                        </Border.GestureRecognizers>
+                        <Grid ColumnDefinitions="60,*,Auto"
+                              RowDefinitions="Auto,Auto"
+                              ColumnSpacing="12"
+                              RowSpacing="4">
+
+                            <!-- 左：类型图标 -->
+                            <Border Grid.Column="0"
+                                    Grid.RowSpan="2"
+                                    BackgroundColor="{DynamicResource PrimaryLight}"
+                                    StrokeShape="RoundRectangle 10"
+                                    StrokeThickness="0"
+                                    WidthRequest="60"
+                                    HeightRequest="60"
+                                    HorizontalOptions="Center"
+                                    VerticalOptions="Center">
+                                 <Label Text="{Binding Type}"
+                                       FontSize="{DynamicResource FontSize22}"
+                                       FontAttributes="Bold"
+                                       TextColor="{DynamicResource Primary}"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center" />
+                            </Border>
+
+                            <!-- 中上：地点名 -->
+                            <Label Grid.Column="1"
+                                   Grid.Row="0"
+                                   Text="{Binding Name}"
+                                   FontSize="{DynamicResource FontSize15}"
+                                   FontAttributes="Bold"
+                                   TextColor="{DynamicResource TextPrimary}"
+                                   LineBreakMode="TailTruncation"
+                                   VerticalOptions="End" />
+
+                            <!-- 中下：地址 + 特色 -->
+                            <VerticalStackLayout Grid.Column="1"
+                                                 Grid.Row="1"
+                                                 Spacing="2">
+                                <Label Text="{Binding Address}"
+                                       FontSize="{DynamicResource FontSize12}"
+                                       TextColor="{DynamicResource TextSecondary}"
+                                       LineBreakMode="TailTruncation" />
+                                <Label Text="{Binding Feature}"
+                                       FontSize="{DynamicResource FontSize12}"
+                                       TextColor="{DynamicResource TextSecondary}"
+                                       FontAttributes="Italic"
+                                       LineBreakMode="TailTruncation" />
+                            </VerticalStackLayout>
+
+                            <!-- 右上：距离标签 -->
+                            <Border Grid.Column="2"
+                                    Grid.Row="0"
+                                    BackgroundColor="{DynamicResource PrimaryLight}"
+                                    StrokeShape="RoundRectangle 10"
+                                    StrokeThickness="0"
+                                    Padding="8,3"
+                                    HorizontalOptions="End"
+                                    VerticalOptions="Start">
+                                <Label Text="{Binding DistanceText}"
+                                       FontSize="{DynamicResource FontSize12}"
+                                       FontAttributes="Bold"
+                                       TextColor="{DynamicResource Primary}" />
+                            </Border>
+
+                            <!-- 右下：经纬度 -->
+                            <Label Grid.Column="2"
+                                   Grid.Row="1"
+                                   Text="{Binding CoordinatesText}"
+                                   FontSize="{DynamicResource FontSize10}"
+                                   FontFamily="Courier New"
+                                   TextColor="{DynamicResource TextSecondary}"
+                                   HorizontalOptions="End"
+                                   VerticalOptions="End"
+                                   LineBreakMode="TailTruncation" />
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+            <CollectionView.EmptyView>
+                <VerticalStackLayout HorizontalOptions="Center"
+                                     VerticalOptions="Center"
+                                     Spacing="12"
+                                     Margin="0,40,0,0">
+                    <Label Text="&#xf3c5;"
+                           FontFamily="fa-solid-900"
+                           FontSize="{DynamicResource FontSize40}"
+                           TextColor="{DynamicResource TextSecondary}"
+                           HorizontalOptions="Center" />
+                    <Label Text="附近暂无美食地标"
+                           FontSize="{DynamicResource FontSize16}"
+                           TextColor="{DynamicResource TextSecondary}"
+                           HorizontalOptions="Center" />
+                </VerticalStackLayout>
+            </CollectionView.EmptyView>
+        </CollectionView>
+    </Grid>
+</ContentPage>

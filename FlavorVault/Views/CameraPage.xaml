@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:FlavorVault.ViewModels"
+             xmlns:converters="clr-namespace:FlavorVault.Converters"
+             x:Class="FlavorVault.Views.CameraPage"
+             x:DataType="viewmodels:CameraViewModel"
+             Title="拍照识别"
+             BackgroundColor="{DynamicResource Background}">
+
+    <ContentPage.Resources>
+        <converters:StringToUriConverter x:Key="StringToUriConverter" />
+        <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
+        <converters:BoolToColorConverter x:Key="BoolToColorConverter"
+                                         TrueColor="{StaticResource Primary}"
+                                         FalseColor="{StaticResource TextSecondary}" />
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="*,Auto"
+          RowSpacing="0">
+
+        <Grid Grid.Row="0"
+              BackgroundColor="#1A1A1A"
+              Margin="0">
+
+            <VerticalStackLayout HorizontalOptions="Center"
+                                 VerticalOptions="Center"
+                                 Spacing="12"
+                                 IsVisible="{Binding HasImage, Converter={StaticResource InverseBoolConverter}}">
+                <Label Text="&#xf030;"
+                       FontFamily="fa-solid-900"
+                       FontSize="{DynamicResource FontSize60}"
+                       TextColor="#666666"
+                       HorizontalOptions="Center" />
+                <Label Text="点击下方按钮拍照或选取照片"
+                       FontSize="{DynamicResource FontSize16}"
+                       TextColor="#999999"
+                       HorizontalOptions="Center" />
+            </VerticalStackLayout>
+
+            <Image Source="{Binding CapturedImagePath, Converter={StaticResource StringToUriConverter}}"
+                   Aspect="AspectFit"
+                   IsVisible="{Binding HasImage}" />
+
+            <Border IsVisible="{Binding HasImage}"
+                    BackgroundColor="#CC000000"
+                    StrokeShape="RoundRectangle 20"
+                    StrokeThickness="0"
+                    HorizontalOptions="End"
+                    VerticalOptions="Start"
+                    Padding="12,6"
+                    Margin="16">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding ResetCommand}" />
+                </Border.GestureRecognizers>
+                <HorizontalStackLayout Spacing="6">
+                    <Label Text="&#xf021;"
+                           FontFamily="fa-solid-900"
+                           FontSize="{DynamicResource FontSize12}"
+                           TextColor="White"
+                           VerticalOptions="Center" />
+                    <Label Text="重拍"
+                           FontSize="{DynamicResource FontSize13}"
+                           TextColor="White"
+                           VerticalOptions="Center" />
+                </HorizontalStackLayout>
+            </Border>
+        </Grid>
+
+        <Border Grid.Row="1"
+                BackgroundColor="{DynamicResource Surface}"
+                StrokeShape="RoundRectangle 0"
+                StrokeThickness="0"
+                Padding="16,12">
+            <VerticalStackLayout Spacing="12">
+                <HorizontalStackLayout HorizontalOptions="Center"
+                                       Spacing="24">
+                    <VerticalStackLayout Spacing="4"
+                                         HorizontalOptions="Center">
+                        <Border BackgroundColor="{DynamicResource PrimaryLight}"
+                                StrokeShape="RoundRectangle 28"
+                                StrokeThickness="0"
+                                WidthRequest="56"
+                                HeightRequest="56"
+                                HorizontalOptions="Center">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding TakePhotoCommand}" />
+                            </Border.GestureRecognizers>
+                            <Label Text="&#xf030;"
+                                   FontFamily="fa-solid-900"
+                                   FontSize="{DynamicResource FontSize22}"
+                                   TextColor="{DynamicResource Primary}"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center" />
+                        </Border>
+                        <Label Text="拍照"
+                               FontSize="{DynamicResource FontSize12}"
+                               TextColor="{DynamicResource TextSecondary}"
+                               HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="4"
+                                         HorizontalOptions="Center">
+                        <Border BackgroundColor="{DynamicResource PrimaryLight}"
+                                StrokeShape="RoundRectangle 28"
+                                StrokeThickness="0"
+                                WidthRequest="56"
+                                HeightRequest="56"
+                                HorizontalOptions="Center">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding PickPhotoCommand}" />
+                            </Border.GestureRecognizers>
+                            <Label Text="&#xf03e;"
+                                   FontFamily="fa-solid-900"
+                                   FontSize="{DynamicResource FontSize22}"
+                                   TextColor="{DynamicResource Primary}"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center" />
+                        </Border>
+                        <Label Text="相册"
+                               FontSize="{DynamicResource FontSize12}"
+                               TextColor="{DynamicResource TextSecondary}"
+                               HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="4"
+                                         HorizontalOptions="Center">
+                        <Border BackgroundColor="{DynamicResource PrimaryLight}"
+                                StrokeShape="RoundRectangle 28"
+                                StrokeThickness="0"
+                                WidthRequest="56"
+                                HeightRequest="56"
+                                HorizontalOptions="Center">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding ToggleFlashCommand}" />
+                            </Border.GestureRecognizers>
+                            <Label Text="&#xf0e7;"
+                                   FontFamily="fa-solid-900"
+                                   FontSize="{DynamicResource FontSize22}"
+                                   TextColor="{Binding IsFlashOn, Converter={StaticResource BoolToColorConverter}}"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center" />
+                        </Border>
+                        <Label Text="闪光灯"
+                               FontSize="{DynamicResource FontSize12}"
+                               TextColor="{DynamicResource TextSecondary}"
+                               HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+                </HorizontalStackLayout>
+
+                <Button Text="&#xf46b; 录入图鉴"
+                        AutomationId="BtnSaveEntry"
+                        FontFamily="fa-solid-900"
+                        FontSize="{DynamicResource FontSize14}"
+                        BackgroundColor="{DynamicResource Primary}"
+                        TextColor="White"
+                        HeightRequest="44"
+                        CornerRadius="22"
+                        Command="{Binding SaveToCatalogCommand}"
+                        IsVisible="{Binding HasImage}"
+                        HorizontalOptions="Fill" />
+            </VerticalStackLayout>
+        </Border>
+    </Grid>
+</ContentPage>

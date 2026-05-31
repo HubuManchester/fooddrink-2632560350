@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:FlavorVault.ViewModels"
+             xmlns:converters="clr-namespace:FlavorVault.Converters"
+             x:Class="FlavorVault.Views.ShowcaseManagePage"
+             x:DataType="viewmodels:ShowcaseManageViewModel"
+             Title="管理橱窗"
+             BackgroundColor="{DynamicResource Background}">
+
+    <ContentPage.Resources>
+        <converters:StringToUriConverter x:Key="StringToUriConverter" />
+        <converters:StringNotNullConverter x:Key="StringNotNullConverter" />
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*">
+        <Border Grid.Row="0"
+                BackgroundColor="{DynamicResource Surface}"
+                StrokeThickness="0"
+                Padding="16,12"
+                Margin="0,0,0,1">
+            <Label Text="{Binding SummaryText}"
+                   FontSize="{DynamicResource FontSize14}"
+                   TextColor="{DynamicResource TextSecondary}"
+                   HorizontalOptions="Center" />
+        </Border>
+
+        <CollectionView Grid.Row="1"
+                        ItemsSource="{Binding Items}"
+                        Margin="8,8"
+                        SemanticProperties.Description="橱窗管理列表">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="viewmodels:ShowcaseManageViewModel+ShowcaseItem">
+                    <Border StrokeShape="RoundRectangle 12"
+                            StrokeThickness="0"
+                            BackgroundColor="{DynamicResource Surface}"
+                            Margin="4,4"
+                            Padding="0">
+                        <Border.Shadow>
+                            <Shadow Brush="{AppThemeBinding Light=#20000000, Dark=#30000000}"
+                                    Offset="0,2" Radius="4" Opacity="0.2" />
+                        </Border.Shadow>
+                        <Grid ColumnDefinitions="Auto,*,Auto"
+                              Padding="12"
+                              ColumnSpacing="12">
+
+                            <Border Grid.Column="0"
+                                    WidthRequest="60"
+                                    HeightRequest="60"
+                                    StrokeShape="RoundRectangle 8"
+                                    StrokeThickness="0"
+                                    BackgroundColor="{AppThemeBinding Light=#F0F0F0, Dark=#333333}">
+                                <Grid>
+                                    <Label Text="&#xf0f5;"
+                                           FontFamily="fa-solid-900"
+                                           FontSize="{DynamicResource FontSize20}"
+                                           TextColor="{AppThemeBinding Light=#CCCCCC, Dark=#555555}"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center" />
+                                    <Image Source="{Binding Entry.ImagePath, Converter={StaticResource StringToUriConverter}}"
+                                           Aspect="AspectFill" />
+                                </Grid>
+                            </Border>
+
+                            <VerticalStackLayout Grid.Column="1"
+                                                 VerticalOptions="Center"
+                                                 Spacing="2">
+                                <Label Text="{Binding Entry.Name}"
+                                       FontSize="{DynamicResource FontSize14}"
+                                       FontAttributes="Bold"
+                                       LineBreakMode="TailTruncation"
+                                       TextColor="{DynamicResource TextPrimary}" />
+                                <Label FontSize="{DynamicResource FontSize12}"
+                                       TextColor="{DynamicResource TextSecondary}"
+                                       LineBreakMode="TailTruncation">
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="{Binding Entry.Region}" />
+                                            <Span Text=" · " />
+                                            <Span Text="{Binding Entry.Rarity}" />
+                                            <Span Text=" · " />
+                                            <Span Text="{Binding Entry.PrimaryTaste}" />
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+                            </VerticalStackLayout>
+
+                            <Border Grid.Column="2"
+                                    WidthRequest="80"
+                                    HeightRequest="36"
+                                    StrokeShape="RoundRectangle 18"
+                                    StrokeThickness="0"
+                                    VerticalOptions="Center">
+                                <Border.BackgroundColor>
+                                    <Binding Path="IsShowcase">
+                                        <Binding.Converter>
+                                            <converters:BoolToColorConverter TrueColor="#E91E63"
+                                                                             FalseColor="#E0E0E0" />
+                                        </Binding.Converter>
+                                    </Binding>
+                                </Border.BackgroundColor>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:ShowcaseManageViewModel}}, Path=ToggleShowcaseCommand}"
+                                        CommandParameter="{Binding}" />
+                                </Border.GestureRecognizers>
+                                <Label Text="{Binding DisplayText}"
+                                       FontSize="{DynamicResource FontSize12}"
+                                       FontAttributes="Bold"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center">
+                                    <Label.TextColor>
+                                        <Binding Path="IsShowcase">
+                                            <Binding.Converter>
+                                                <converters:BoolToColorConverter TrueColor="White"
+                                                                                 FalseColor="#999999" />
+                                            </Binding.Converter>
+                                        </Binding>
+                                    </Label.TextColor>
+                                </Label>
+                            </Border>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>

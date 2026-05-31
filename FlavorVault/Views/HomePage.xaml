@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:FlavorVault.ViewModels"
+             xmlns:converters="clr-namespace:FlavorVault.Converters"
+              xmlns:controls="clr-namespace:FlavorVault.Controls"
+              xmlns:models="clr-namespace:FlavorVault.Models"
+              x:Class="FlavorVault.Views.HomePage"
+              x:DataType="viewmodels:HomeViewModel"
+             Title="首页"
+             BackgroundColor="{DynamicResource Background}">
+
+    <ContentPage.Resources>
+        <converters:StringNotNullConverter x:Key="StringNotNullConverter" />
+        <converters:RarityToColorConverter x:Key="RarityToColorConverter" />
+        <converters:StringToUriConverter x:Key="StringToUriConverter" />
+        <converters:ProgressToWidthConverter x:Key="ProgressToWidthConverter" />
+        <converters:IntToBoolConverter x:Key="IntToBoolConverter" />
+        <converters:InverseIntConverter x:Key="InverseIntConverter" />
+    </ContentPage.Resources>
+
+    <Grid>
+     <RefreshView Command="{Binding LoadDataCommand}"
+                 IsRefreshing="{Binding IsRefreshing}"
+                 AutomationId="HomeRefreshView">
+        <ScrollView>
+            <VerticalStackLayout Spacing="16"
+                                 Padding="16,8">
+
+                <!-- 顶部区域 -->
+                <Grid ColumnDefinitions="*,Auto"
+                      Margin="0,8,0,0">
+                    <VerticalStackLayout Grid.Column="0"
+                                         VerticalOptions="Center">
+                        <Label Text="我的图鉴"
+                               FontSize="{DynamicResource FontSize24}"
+                               FontAttributes="Bold"
+                               TextColor="{DynamicResource TextPrimary}"
+                               SemanticProperties.Description="我的图鉴" />
+                        <Label Text="{Binding EntryCountText}"
+                               FontSize="{DynamicResource FontSize14}"
+                               TextColor="{DynamicResource TextSecondary}"
+                               SemanticProperties.Description="{Binding EntryCountText}" />
+                    </VerticalStackLayout>
+
+                    <!-- 相机图标按钮 -->
+                    <Border Grid.Column="1"
+                            WidthRequest="44"
+                            HeightRequest="44"
+                            StrokeShape="RoundRectangle 22"
+                            BackgroundColor="{DynamicResource PrimaryLight}"
+                            StrokeThickness="0"
+                            VerticalOptions="Center">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding GoToCameraCommand}" />
+                        </Border.GestureRecognizers>
+                        <Label FontFamily="fa-solid-900"
+                               Text="&#xf030;"
+                               FontSize="{DynamicResource FontSize18}"
+                               TextColor="{DynamicResource Primary}"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               SemanticProperties.Description="拍照录入"
+                               SemanticProperties.Hint="点击跳转到拍照录入页面" />
+                    </Border>
+                </Grid>
+
+                <!-- 地区分布饼状图 -->
+                <controls:RegionPieChart RegionProgresses="{Binding RegionProgresses}"
+                                         AutomationId="RegionPieChart" />
+
+                <!-- 稀有度统计 -->
+                <controls:RarityCard RarityStats="{Binding RarityStats}"
+                                     AutomationId="RarityCard" />
+
+                <!-- 橱窗精选 -->
+                <VerticalStackLayout Spacing="12">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Grid.Column="0"
+                               Text="橱窗精选"
+                               FontSize="{DynamicResource FontSize18}"
+                               FontAttributes="Bold"
+                               TextColor="{DynamicResource TextPrimary}" />
+                        <Label Grid.Column="1"
+                               Text="管理橱窗"
+                               FontSize="{DynamicResource FontSize14}"
+                               TextColor="{DynamicResource Primary}">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding GoToShowcaseManageCommand}" />
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </Grid>
+
+                    <ScrollView Orientation="Horizontal"
+                                HorizontalScrollBarVisibility="Never"
+                                HeightRequest="170">
+                        <HorizontalStackLayout BindableLayout.ItemsSource="{Binding ShowcaseEntries}"
+                                               Spacing="12">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="models:FoodEntry">
+                                    <Border StrokeShape="RoundRectangle 10"
+                                            StrokeThickness="0"
+                                            BackgroundColor="{DynamicResource Surface}"
+                                            WidthRequest="110"
+                                            Padding="6">
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:HomeViewModel}}, Path=GoToEntryDetailCommand}"
+                                                CommandParameter="{Binding}" />
+                                        </Border.GestureRecognizers>
+                                        <VisualStateManager.VisualStateGroups>
+                                            <VisualStateGroupList>
+                                                <VisualStateGroup x:Name="CommonStates">
+                                                    <VisualState x:Name="Normal" />
+                                                    <VisualState x:Name="PointerOver">
+                                                        <VisualState.Setters>
+                                                            <Setter Property="Scale" Value="1.05" />
+                                                        </VisualState.Setters>
+                                                    </VisualState>
+                                                </VisualStateGroup>
+                                            </VisualStateGroupList>
+                                        </VisualStateManager.VisualStateGroups>
+                                        <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                                            <!-- 食物图片 90x90 -->
+                                            <Border StrokeShape="RoundRectangle 8"
+                                                    StrokeThickness="0"
+                                                    WidthRequest="90"
+                                                    HeightRequest="90"
+                                                    BackgroundColor="{DynamicResource Gray200}">
+                                                <Grid>
+                                                    <Label Text="&#xf0f5;"
+                                                           FontFamily="fa-solid-900"
+                                                           FontSize="{DynamicResource FontSize24}"
+                                                           TextColor="{DynamicResource Gray400}"
+                                                           HorizontalOptions="Center"
+                                                           VerticalOptions="Center" />
+                                                    <Image Source="{Binding ImagePath}"
+                                                           Aspect="AspectFill" />
+                                                </Grid>
+                                            </Border>
+                                            <!-- 食物名称 -->
+                                            <Label Text="{Binding Name}"
+                                                   FontSize="{DynamicResource FontSize12}"
+                                                   FontAttributes="Bold"
+                                                   LineBreakMode="TailTruncation"
+                                                   HorizontalOptions="Center"
+                                                   TextColor="{DynamicResource TextPrimary}" />
+                                            <!-- 稀有度 -->
+                                            <Label Text="{Binding Rarity}"
+                                                   FontSize="{DynamicResource FontSize10}"
+                                                   TextColor="{DynamicResource Primary}"
+                                                   HorizontalOptions="Center" />
+                                        </VerticalStackLayout>
+                                    </Border>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </HorizontalStackLayout>
+                    </ScrollView>
+
+                    <!-- 无数据提示 -->
+                    <Label Text="暂无精选，去图鉴里标记喜欢的美食吧"
+                           FontSize="{DynamicResource FontSize13}"
+                           TextColor="{DynamicResource TextSecondary}"
+                           HorizontalOptions="Center"
+                           Margin="0,8"
+                           IsVisible="{Binding ShowcaseEntries.Count, Converter={StaticResource InverseIntConverter}}" />
+                </VerticalStackLayout>
+
+                <!-- 快捷操作 -->
+                <Grid ColumnDefinitions="*,*,*,*"
+                      ColumnSpacing="12"
+                      Margin="0,4">
+                    <!-- 摇一摇 -->
+                    <VerticalStackLayout Grid.Column="0" HorizontalOptions="Center" Spacing="6">
+                        <Border WidthRequest="50" HeightRequest="50"
+                                StrokeShape="RoundRectangle 25"
+                                BackgroundColor="{DynamicResource PrimaryLight}"
+                                StrokeThickness="0">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding ShakeDiscoverCommand}" />
+                            </Border.GestureRecognizers>
+                            <Label FontFamily="fa-solid-900" Text="&#xf074;"
+                                   FontSize="{DynamicResource FontSize20}" TextColor="{DynamicResource Primary}"
+                                   HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Border>
+                        <Label Text="摇一摇" FontSize="{DynamicResource FontSize11}"
+                               TextColor="{DynamicResource TextSecondary}"
+                               HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+
+                    <!-- 拍照 -->
+                    <VerticalStackLayout Grid.Column="1" HorizontalOptions="Center" Spacing="6">
+                        <Border WidthRequest="50" HeightRequest="50"
+                                StrokeShape="RoundRectangle 25"
+                                BackgroundColor="{DynamicResource PrimaryLight}"
+                                StrokeThickness="0">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding GoToCameraCommand}" />
+                            </Border.GestureRecognizers>
+                            <Label FontFamily="fa-solid-900" Text="&#xf030;"
+                                   FontSize="{DynamicResource FontSize20}" TextColor="{DynamicResource Primary}"
+                                   HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Border>
+                        <Label Text="拍照录入" FontSize="{DynamicResource FontSize11}"
+                               TextColor="{DynamicResource TextSecondary}"
+                               HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+
+                    <!-- 探索 -->
+                    <VerticalStackLayout Grid.Column="2" HorizontalOptions="Center" Spacing="6">
+                        <Border WidthRequest="50" HeightRequest="50"
+                                StrokeShape="RoundRectangle 25"
+                                BackgroundColor="{DynamicResource PrimaryLight}"
+                                StrokeThickness="0">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding GoToExploreCommand}" />
+                            </Border.GestureRecognizers>
+                            <Label FontFamily="fa-solid-900" Text="&#xf3c5;"
+                                   FontSize="{DynamicResource FontSize20}" TextColor="{DynamicResource Primary}"
+                                   HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Border>
+                        <Label Text="附近探索" FontSize="{DynamicResource FontSize11}"
+                               TextColor="{DynamicResource TextSecondary}"
+                               HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+
+                    <!-- 新增 -->
+                    <VerticalStackLayout Grid.Column="3" HorizontalOptions="Center" Spacing="6">
+                        <Border WidthRequest="50" HeightRequest="50"
+                                StrokeShape="RoundRectangle 25"
+                                BackgroundColor="{DynamicResource PrimaryLight}"
+                                StrokeThickness="0">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding GoToNewEntryCommand}" />
+                            </Border.GestureRecognizers>
+                            <Label FontFamily="fa-solid-900" Text="&#xf067;"
+                                   FontSize="{DynamicResource FontSize20}" TextColor="{DynamicResource Primary}"
+                                   HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Border>
+                        <Label Text="新增条目" FontSize="{DynamicResource FontSize11}"
+                               TextColor="{DynamicResource TextSecondary}"
+                               HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+                </Grid>
+
+                <!-- 底部间距 -->
+                <BoxView HeightRequest="16" />
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </RefreshView>
+
+        <!-- 摇一摇结果弹窗 -->
+        <Grid BackgroundColor="#80000000"
+              IsVisible="{Binding HasShakeResult}"
+              HorizontalOptions="Fill"
+              VerticalOptions="Fill">
+            <Border StrokeShape="RoundRectangle 16"
+                    BackgroundColor="{DynamicResource Background}"
+                    StrokeThickness="0"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"
+                    WidthRequest="320"
+                    Padding="0">
+                <Border.Shadow>
+                    <Shadow Brush="#40000000" Offset="0,4" Radius="12" />
+                </Border.Shadow>
+                <VerticalStackLayout Spacing="0">
+                    <!-- 标题栏 -->
+                    <Grid ColumnDefinitions="Auto,*"
+                          Padding="16,12">
+                        <Label Grid.Column="0"
+                               FontFamily="fa-solid-900"
+                               Text="&#xf074;"
+                               FontSize="{DynamicResource FontSize16}"
+                               TextColor="{DynamicResource Primary}"
+                               VerticalOptions="Center"
+                               Margin="0,0,8,0" />
+                        <Label Grid.Column="1"
+                               Text="摇一摇发现"
+                               FontSize="{DynamicResource FontSize18}"
+                               FontAttributes="Bold"
+                               TextColor="{DynamicResource TextPrimary}"
+                               VerticalOptions="Center" />
+                    </Grid>
+
+                    <!-- 内容区 -->
+                    <Grid ColumnDefinitions="*,Auto"
+                          Padding="16,0,16,12"
+                          RowSpacing="4">
+                        <VerticalStackLayout Grid.Column="0" Spacing="6" VerticalOptions="Center">
+                            <Label Text="{Binding ShakeResult.Name}"
+                                   FontSize="{DynamicResource FontSize18}"
+                                   FontAttributes="Bold"
+                                   TextColor="{DynamicResource TextPrimary}" />
+                            <Label FontSize="{DynamicResource FontSize13}"
+                                   TextColor="{DynamicResource TextSecondary}">
+                                <Label.Text>
+                                    <MultiBinding StringFormat="{}{0} · {1}">
+                                        <Binding Path="ShakeResult.Region" />
+                                        <Binding Path="ShakeResult.Rarity" />
+                                    </MultiBinding>
+                                </Label.Text>
+                            </Label>
+                            <Label Text="{Binding ShakeResult.PrimaryTaste}"
+                                   FontSize="{DynamicResource FontSize12}"
+                                   TextColor="{DynamicResource Primary}" />
+                            <Label Text="{Binding ShakeStars}"
+                                   FontSize="{DynamicResource FontSize16}"
+                                   TextColor="#FFD700" />
+                        </VerticalStackLayout>
+                        <Border Grid.Column="1"
+                                StrokeShape="RoundRectangle 8"
+                                StrokeThickness="0"
+                                WidthRequest="100"
+                                HeightRequest="100"
+                                BackgroundColor="{DynamicResource Gray200}">
+                            <Grid>
+                                <Label Text="&#xf0f5;"
+                                       FontFamily="fa-solid-900"
+                                       FontSize="{DynamicResource FontSize28}"
+                                       TextColor="{DynamicResource Gray400}"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center" />
+                                <Image Source="{Binding ShakeResult.ImagePath}"
+                                       Aspect="AspectFill" />
+                            </Grid>
+                        </Border>
+                    </Grid>
+
+                    <!-- 按钮栏 -->
+                    <Grid ColumnDefinitions="*,*"
+                          ColumnSpacing="0"
+                          HeightRequest="48">
+                        <Button Grid.Column="0"
+                                Text="好的"
+                                FontSize="{DynamicResource FontSize15}"
+                                BackgroundColor="Transparent"
+                                TextColor="{DynamicResource TextSecondary}"
+                                Command="{Binding CloseShakeResultCommand}"
+                                CornerRadius="0" />
+                        <Button Grid.Column="1"
+                                Text="查看详情"
+                                FontSize="{DynamicResource FontSize15}"
+                                BackgroundColor="{DynamicResource Primary}"
+                                TextColor="White"
+                                Command="{Binding ViewShakeDetailCommand}"
+                                CornerRadius="0" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
+
+        <!-- 附近探索弹窗 -->
+        <Grid BackgroundColor="#80000000"
+              IsVisible="{Binding HasLocationInfo}"
+              HorizontalOptions="Fill"
+              VerticalOptions="Fill">
+            <Border StrokeShape="RoundRectangle 16"
+                    BackgroundColor="{DynamicResource Background}"
+                    StrokeThickness="0"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"
+                    WidthRequest="320"
+                    Padding="0">
+                <Border.Shadow>
+                    <Shadow Brush="#40000000" Offset="0,4" Radius="12" />
+                </Border.Shadow>
+                <VerticalStackLayout Spacing="0">
+                    <!-- 标题栏 -->
+                    <Grid ColumnDefinitions="Auto,*"
+                          Padding="16,12">
+                        <Label Grid.Column="0"
+                               FontFamily="fa-solid-900"
+                               Text="&#xf3c5;"
+                               FontSize="{DynamicResource FontSize16}"
+                               TextColor="{DynamicResource Primary}"
+                               VerticalOptions="Center"
+                               Margin="0,0,8,0" />
+                        <Label Grid.Column="1"
+                               Text="附近探索"
+                               FontSize="{DynamicResource FontSize18}"
+                               FontAttributes="Bold"
+                               TextColor="{DynamicResource TextPrimary}"
+                               VerticalOptions="Center" />
+                    </Grid>
+
+                    <!-- 内容区 -->
+                    <VerticalStackLayout Padding="16,0,16,12" Spacing="10">
+                        <Grid ColumnDefinitions="Auto,*"
+                              RowDefinitions="Auto,Auto"
+                              ColumnSpacing="12"
+                              RowSpacing="6">
+                            <Label Grid.Row="0" Grid.Column="0"
+                                   Text="&#xf3c5;"
+                                   FontFamily="fa-solid-900"
+                                   FontSize="{DynamicResource FontSize16}"
+                                   TextColor="{DynamicResource Primary}"
+                                   VerticalOptions="Center" />
+                            <Label Grid.Row="0" Grid.Column="1"
+                                   Text="{Binding LocationCity}"
+                                   FontSize="{DynamicResource FontSize16}"
+                                   FontAttributes="Bold"
+                                   TextColor="{DynamicResource TextPrimary}"
+                                   VerticalOptions="Center" />
+                            <Label Grid.Row="1" Grid.Column="0"
+                                   Text="&#xf124;"
+                                   FontFamily="fa-solid-900"
+                                   FontSize="{DynamicResource FontSize14}"
+                                   TextColor="{DynamicResource TextSecondary}"
+                                   VerticalOptions="Center" />
+                            <Label Grid.Row="1" Grid.Column="1"
+                                   Text="{Binding LocationCoordinates}"
+                                   FontSize="{DynamicResource FontSize13}"
+                                   FontFamily="Courier New"
+                                   TextColor="{DynamicResource TextSecondary}"
+                                   VerticalOptions="Center" />
+                        </Grid>
+                    </VerticalStackLayout>
+
+                    <!-- 按钮栏 -->
+                    <Grid ColumnDefinitions="*,*"
+                          ColumnSpacing="0"
+                          HeightRequest="48">
+                        <Button Grid.Column="0"
+                                Text="关闭"
+                                FontSize="{DynamicResource FontSize15}"
+                                BackgroundColor="Transparent"
+                                TextColor="{DynamicResource TextSecondary}"
+                                Command="{Binding CloseLocationInfoCommand}"
+                                CornerRadius="0" />
+                        <Button Grid.Column="1"
+                                Text="&#xf3c5; 打开地图"
+                                FontFamily="fa-solid-900"
+                                FontSize="{DynamicResource FontSize15}"
+                                BackgroundColor="{DynamicResource Primary}"
+                                TextColor="White"
+                                Command="{Binding OpenMapCommand}"
+                                CornerRadius="0" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
+
+    </Grid>
+</ContentPage>

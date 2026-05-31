@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:FlavorVault.Models"
+             x:Class="FlavorVault.Controls.RarityCard"
+             x:Name="This">
+
+    <Border
+        StrokeShape="RoundRectangle 12"
+        StrokeThickness="0"
+        BackgroundColor="{AppThemeBinding Light={DynamicResource Surface}, Dark={DynamicResource Surface}}"
+        Padding="12"
+        Margin="4">
+        <Border.Shadow>
+            <Shadow Brush="{AppThemeBinding Light=#20000000, Dark=#30000000}"
+                    Offset="0,2"
+                    Radius="6"
+                    Opacity="0.3" />
+        </Border.Shadow>
+
+        <StackLayout Spacing="10">
+            <!-- 标题 -->
+            <Label Text="稀有度分布"
+                   FontAttributes="Bold"
+                   FontSize="{DynamicResource FontSize16}"
+                   TextColor="{AppThemeBinding Light={DynamicResource TextPrimary}, Dark={DynamicResource TextPrimary}}" />
+
+            <!-- 横向4个色块 -->
+            <CollectionView
+                ItemsSource="{Binding Source={x:Reference This}, Path=RarityStats}"
+                HorizontalScrollBarVisibility="Never">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Horizontal" ItemSpacing="8" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border
+                            StrokeShape="RoundRectangle 8"
+                            StrokeThickness="0"
+                            BackgroundColor="{Binding Color}"
+                            Padding="12,8"
+                            WidthRequest="80"
+                            HorizontalOptions="Fill">
+                            <Grid RowDefinitions="Auto,Auto" RowSpacing="2" HorizontalOptions="Center">
+                                <Label Grid.Row="0"
+                                       Text="{Binding Count}"
+                                       FontSize="{DynamicResource FontSize22}"
+                                       FontAttributes="Bold"
+                                       TextColor="White"
+                                       HorizontalOptions="Center" />
+                                <Label Grid.Row="1"
+                                       Text="{Binding Rarity}"
+                                       FontSize="{DynamicResource FontSize10}"
+                                       TextColor="#DDFFFFFF"
+                                       HorizontalOptions="Center" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </StackLayout>
+    </Border>
+</ContentView>
