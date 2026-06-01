@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                    x:Class="FlavorVault.Resources.Themes.LightTheme">
+
+    <!-- 主色调（粉色） -->
+    <Color x:Key="Primary">#E91E63</Color>
+    <Color x:Key="PrimaryDark">#C2185B</Color>
+    <Color x:Key="PrimaryLight">#FCE4EC</Color>
+
+    <!-- 强调色（亮粉） -->
+    <Color x:Key="Accent">#FF4081</Color>
+    <Color x:Key="AccentLight">#FFF0F5</Color>
+
+    <!-- 背景（纯白） -->
+    <Color x:Key="Background">#FFFFFF</Color>
+    <Color x:Key="Surface">#FFFFFF</Color>
+
+    <!-- 文字 -->
+    <Color x:Key="TextPrimary">#4A4A4A</Color>
+    <Color x:Key="TextSecondary">#B0B0B0</Color>
+
+    <!-- 稀有度色 -->
+    <Color x:Key="RarityCommon">#9E9E9E</Color>
+    <Color x:Key="RarityUncommon">#42A5F5</Color>
+    <Color x:Key="RarityRare">#AB47BC</Color>
+    <Color x:Key="RarityEpic">#FFB300</Color>
+
+    <!-- 灰色调色板 -->
+    <Color x:Key="Gray100">#F5F5F5</Color>
+    <Color x:Key="Gray200">#EEEEEE</Color>
+    <Color x:Key="Gray300">#E0E0E0</Color>
+    <Color x:Key="Gray400">#BDBDBD</Color>
+    <Color x:Key="Gray500">#9E9E9E</Color>
+    <Color x:Key="Gray600">#757575</Color>
+    <Color x:Key="Gray700">#616161</Color>
+    <Color x:Key="Gray800">#424242</Color>
+    <Color x:Key="Gray900">#212121</Color>
+    <Color x:Key="Gray950">#1C1B1F</Color>
+
+    <!-- 组件色 -->
+    <Color x:Key="CardBackground">#FFFFFF</Color>
+    <Color x:Key="Divider">#F0F0F0</Color>
+
+    <!-- 语义色 -->
+    <Color x:Key="Error">#B00020</Color>
+    <Color x:Key="Success">#4CAF50</Color>
+    <Color x:Key="Warning">#FFC107</Color>
+
+    <!-- 系统 MAUI 覆盖 -->
+    <Color x:Key="WindowBackgroundColor">#FFFFFF</Color>
+
+    <!-- 口味色 -->
+    <Color x:Key="TasteSalty">#42A5F5</Color>
+    <Color x:Key="TasteSweet">#F48FB1</Color>
+    <Color x:Key="TasteSour">#FFEE58</Color>
+    <Color x:Key="TasteSpicy">#EF5350</Color>
+    <Color x:Key="TasteUmami">#66BB6A</Color>
+    <Color x:Key="TasteComplex">#AB47BC</Color>
+
+    <!-- 优先级色 -->
+    <Color x:Key="PriorityHigh">#EF5350</Color>
+    <Color x:Key="PriorityMedium">#FFC107</Color>
+    <Color x:Key="PriorityLow">#66BB6A</Color>
+
+    <!-- 色标 -->
+    <Color x:Key="ColorTagRed">#EF5350</Color>
+    <Color x:Key="ColorTagOrange">#FF9800</Color>
+    <Color x:Key="ColorTagYellow">#FFC107</Color>
+    <Color x:Key="ColorTagGreen">#66BB6A</Color>
+    <Color x:Key="ColorTagBlue">#42A5F5</Color>
+    <Color x:Key="ColorTagPurple">#AB47BC</Color>
+
+</ResourceDictionary>

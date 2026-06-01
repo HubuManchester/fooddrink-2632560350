@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:FlavorVault.ViewModels"
+             xmlns:converters="clr-namespace:FlavorVault.Converters"
+             x:Class="FlavorVault.Views.OnboardingPage"
+             x:DataType="viewmodels:OnboardingViewModel"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="{DynamicResource Background}">
+
+    <ContentPage.Resources>
+        <converters:BoolToColorConverter x:Key="ActiveDotColor"
+                                         TrueColor="{StaticResource Primary}"
+                                         FalseColor="{StaticResource TextSecondary}" />
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="*,Auto"
+          Padding="20,0">
+
+        <!-- 主内容区：CarouselView -->
+        <CarouselView x:Name="OnboardingCarousel"
+                      ItemsSource="{Binding Steps}"
+                      CurrentItem="{Binding CurrentStep}"
+                      Loop="False"
+                      Position="{Binding CurrentIndex}"
+                      HorizontalOptions="Fill"
+                      VerticalOptions="Fill"
+                      AutomationId="OnboardingCarousel">
+            <CarouselView.ItemTemplate>
+                <DataTemplate x:DataType="viewmodels:OnboardingStepModel">
+                    <Grid RowDefinitions="*,Auto,Auto"
+                          RowSpacing="16"
+                          HorizontalOptions="Fill"
+                          VerticalOptions="Center"
+                          Padding="20,0">
+
+                        <!-- 图标圆形区域 -->
+                        <Border HorizontalOptions="Center"
+                                VerticalOptions="End"
+                                WidthRequest="120"
+                                HeightRequest="120"
+                                StrokeShape="RoundRectangle 60"
+                                BackgroundColor="{DynamicResource PrimaryLight}"
+                                StrokeThickness="0">
+                            <Label FontFamily="fa-solid-900"
+                                   Text="{Binding IconGlyph}"
+                                   FontSize="{DynamicResource FontSize48}"
+                                   TextColor="{DynamicResource Primary}"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center" />
+                        </Border>
+
+                        <!-- 标题 -->
+                        <Label Grid.Row="1"
+                               Text="{Binding Title}"
+                               FontSize="{DynamicResource FontSize24}"
+                               FontAttributes="Bold"
+                               TextColor="{DynamicResource TextPrimary}"
+                               HorizontalOptions="Center"
+                               HorizontalTextAlignment="Center"
+                               SemanticProperties.Description="{Binding Title}" />
+
+                        <!-- 描述 -->
+                        <Label Grid.Row="2"
+                               Text="{Binding Description}"
+                               FontSize="{DynamicResource FontSize15}"
+                               TextColor="{DynamicResource TextSecondary}"
+                               HorizontalOptions="Center"
+                               HorizontalTextAlignment="Center"
+                               LineHeight="1.5"
+                               MaxLines="3"
+                               SemanticProperties.Description="{Binding Description}" />
+                    </Grid>
+                </DataTemplate>
+            </CarouselView.ItemTemplate>
+        </CarouselView>
+
+        <!-- 底部控制区 -->
+        <Grid Grid.Row="1"
+              RowDefinitions="Auto,Auto"
+              ColumnDefinitions="*,*"
+              ColumnSpacing="16"
+              Padding="0,20"
+              HorizontalOptions="Fill">
+
+            <!-- 圆点指示器 -->
+            <HorizontalStackLayout Grid.ColumnSpan="2"
+                                   HorizontalOptions="Center"
+                                   Spacing="8"
+                                   Margin="0,0,0,20">
+                <Ellipse WidthRequest="10"
+                         HeightRequest="10"
+                         Fill="{Binding IsFirstStep, Converter={StaticResource ActiveDotColor}}"
+                         x:Name="Dot1"
+                         AutomationId="Dot1" />
+                <Ellipse WidthRequest="10"
+                         HeightRequest="10"
+                         Fill="{Binding IsSecondStep, Converter={StaticResource ActiveDotColor}}"
+                         x:Name="Dot2"
+                         AutomationId="Dot2" />
+                <Ellipse WidthRequest="10"
+                         HeightRequest="10"
+                         Fill="{Binding IsThirdStep, Converter={StaticResource ActiveDotColor}}"
+                         x:Name="Dot3"
+                         AutomationId="Dot3" />
+            </HorizontalStackLayout>
+
+            <!-- 跳过按钮 -->
+            <Button Grid.Row="1"
+                    Grid.Column="0"
+                    Text="跳过"
+                    FontSize="{DynamicResource FontSize16}"
+                    TextColor="{DynamicResource TextSecondary}"
+                    BackgroundColor="Transparent"
+                    BorderColor="{DynamicResource TextSecondary}"
+                    BorderWidth="1"
+                    Command="{Binding SkipCommand}"
+                    IsVisible="{Binding IsNotLastStep}"
+                    HeightRequest="48"
+                    CornerRadius="24"
+                    AutomationId="BtnSkip"
+                    SemanticProperties.Description="跳过引导"
+                    SemanticProperties.Hint="点击跳过引导页" />
+
+            <!-- 下一步 / 开始使用按钮 -->
+            <Button Grid.Row="1"
+                    Grid.Column="1"
+                    Text="{Binding NextButtonText}"
+                    FontSize="{DynamicResource FontSize16}"
+                    FontAttributes="Bold"
+                    TextColor="White"
+                    BackgroundColor="{DynamicResource Primary}"
+                    Command="{Binding NextCommand}"
+                    HeightRequest="48"
+                    CornerRadius="24"
+                    AutomationId="BtnNext"
+                    SemanticProperties.Description="{Binding NextButtonText}"
+                    SemanticProperties.Hint="点击进入下一步" />
+        </Grid>
+    </Grid>
+</ContentPage>

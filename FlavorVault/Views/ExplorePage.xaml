@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:FlavorVault.ViewModels"
+             xmlns:converters="clr-namespace:FlavorVault.Converters"
+             xmlns:controls="clr-namespace:FlavorVault.Controls"
+             xmlns:models="clr-namespace:FlavorVault.Models"
+             x:Class="FlavorVault.Views.ExplorePage"
+             x:DataType="viewmodels:ExploreViewModel"
+             Title="探索"
+             BackgroundColor="{DynamicResource Background}">
+
+    <ContentPage.Resources>
+        <converters:DistanceToStringConverter x:Key="DistanceToStringConverter" />
+        <converters:StringToUriConverter x:Key="StringToUriConverter" />
+        <converters:RarityToColorConverter x:Key="RarityToColorConverter" />
+        <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
+        <converters:StringNotNullConverter x:Key="StringNotNullConverter" />
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="16"
+                             Padding="16"
+                             VerticalOptions="Start">
+
+            <!-- 当前位置卡片 -->
+            <Border BackgroundColor="{DynamicResource Surface}"
+                    StrokeShape="RoundRectangle 12"
+                    StrokeThickness="0"
+                    Padding="16">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="当前位置"
+                           FontSize="{DynamicResource FontSize16}"
+                           FontAttributes="Bold"
+                           TextColor="{DynamicResource TextPrimary}" />
+                    <Label Text="{Binding CoordinatesText}"
+                           FontSize="{DynamicResource FontSize13}"
+                           FontFamily="Courier New"
+                           TextColor="{DynamicResource TextSecondary}" />
+                    <HorizontalStackLayout Spacing="8">
+                        <Label Text="&#xf14e;"
+                               FontFamily="fa-solid-900"
+                               FontSize="{DynamicResource FontSize14}"
+                               TextColor="{DynamicResource Primary}"
+                               VerticalOptions="Center" />
+                        <Label Text="{Binding CompassText}"
+                               FontSize="{DynamicResource FontSize13}"
+                               TextColor="{DynamicResource TextSecondary}"
+                               VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+                    <Label Text="{Binding LocationStatus}"
+                           FontSize="{DynamicResource FontSize12}"
+                           TextColor="{DynamicResource TextSecondary}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- 摇一摇探索区 -->
+            <Border BackgroundColor="{DynamicResource Surface}"
+                    StrokeShape="RoundRectangle 16"
+                    StrokeThickness="0"
+                    Padding="24"
+                    HorizontalOptions="Fill">
+                <VerticalStackLayout Spacing="16"
+                                     HorizontalOptions="Center">
+                    <!-- 摇一摇提示 / 随机结果 -->
+                    <VerticalStackLayout HorizontalOptions="Center"
+                                         Spacing="12"
+                                         IsVisible="{Binding HasRandomEntry, Converter={StaticResource InverseBoolConverter}}">
+                        <Label Text="&#xf074;"
+                               FontFamily="fa-solid-900"
+                               FontSize="{DynamicResource FontSize48}"
+                               TextColor="{DynamicResource Primary}"
+                               HorizontalOptions="Center" />
+                        <Label Text="摇动手机，探索一道新美食"
+                               FontSize="{DynamicResource FontSize16}"
+                               TextColor="{DynamicResource TextSecondary}"
+                               HorizontalOptions="Center" />
+                        <Label Text="也可以点击下方按钮随机获取"
+                               FontSize="{DynamicResource FontSize12}"
+                               TextColor="{DynamicResource TextSecondary}"
+                               HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+
+                    <!-- 随机结果展示 -->
+                    <VerticalStackLayout HorizontalOptions="Center"
+                                         Spacing="12"
+                                         IsVisible="{Binding HasRandomEntry}">
+                        <!-- 食物图片 -->
+                        <Border StrokeShape="RoundRectangle 12"
+                                StrokeThickness="0"
+                                BackgroundColor="{DynamicResource PrimaryLight}"
+                                WidthRequest="160"
+                                HeightRequest="160"
+                                HorizontalOptions="Center">
+                            <Grid>
+                                <!-- 占位 -->
+                                <Label Text="&#xf0f5;"
+                                       FontFamily="fa-solid-900"
+                                       FontSize="{DynamicResource FontSize40}"
+                                       TextColor="{DynamicResource TextSecondary}"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center" />
+                                <!-- 图片 -->
+                                <Image Source="{Binding RandomEntry.ImagePath, Converter={StaticResource StringToUriConverter}}"
+                                       Aspect="AspectFill" />
+                            </Grid>
+                        </Border>
+
+                        <!-- 食物信息 -->
+                        <Label Text="{Binding RandomEntry.Name}"
+                               FontSize="{DynamicResource FontSize18}"
+                               FontAttributes="Bold"
+                               TextColor="{DynamicResource TextPrimary}"
+                               HorizontalOptions="Center" />
+                        <HorizontalStackLayout Spacing="8"
+                                               HorizontalOptions="Center">
+                            <Border BackgroundColor="{DynamicResource PrimaryLight}"
+                                    StrokeShape="RoundRectangle 10"
+                                    StrokeThickness="0"
+                                    Padding="8,3">
+                                <Label Text="{Binding RandomEntry.Region}"
+                                       FontSize="{DynamicResource FontSize12}"
+                                       TextColor="{DynamicResource Primary}" />
+                            </Border>
+                            <Border BackgroundColor="{Binding RandomEntry.Rarity, Converter={StaticResource RarityToColorConverter}}"
+                                    StrokeShape="RoundRectangle 10"
+                                    StrokeThickness="0"
+                                    Padding="8,3">
+                                <Label Text="{Binding RandomEntry.Rarity}"
+                                       FontSize="{DynamicResource FontSize12}"
+                                       TextColor="White" />
+                            </Border>
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+
+                    <!-- 操作按钮 -->
+                    <Grid ColumnDefinitions="*,*"
+                          ColumnSpacing="12"
+                          IsVisible="{Binding HasRandomEntry}">
+                         <Button Grid.Column="0"
+                                 Text="查看详情"
+                                 AutomationId="BtnViewDetail"
+                                 FontSize="{DynamicResource FontSize14}"
+                                 BackgroundColor="{DynamicResource Primary}"
+                                 TextColor="White"
+                                 HeightRequest="40"
+                                 CornerRadius="20"
+                                 Command="{Binding GoToEntryDetailCommand}"
+                                 CommandParameter="{Binding RandomEntry}" />
+                         <Button Grid.Column="1"
+                                 Text="添加到心愿"
+                                 AutomationId="BtnAddToWish"
+                                 FontSize="{DynamicResource FontSize14}"
+                                 BackgroundColor="{DynamicResource Accent}"
+                                 TextColor="White"
+                                 HeightRequest="40"
+                                 CornerRadius="20"
+                                 Command="{Binding AddToWishCommand}"
+                                 CommandParameter="{Binding RandomEntry}" />
+                    </Grid>
+
+                    <!-- 随机按钮 -->
+                     <Button Text="&#xf074; 随机探索"
+                             AutomationId="BtnShakeExplore"
+                             FontFamily="fa-solid-900"
+                             FontSize="{DynamicResource FontSize15}"
+                             BackgroundColor="{DynamicResource PrimaryLight}"
+                             TextColor="{DynamicResource Primary}"
+                             HeightRequest="44"
+                             CornerRadius="22"
+                             Command="{Binding RandomPickCommand}"
+                             IsVisible="{Binding HasRandomEntry, Converter={StaticResource InverseBoolConverter}}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- 附近美食地点 -->
+            <VerticalStackLayout Spacing="12">
+                <Grid ColumnDefinitions="*,Auto">
+                    <Label Grid.Column="0"
+                           Text="附近美食地标"
+                           FontSize="{DynamicResource FontSize18}"
+                           FontAttributes="Bold"
+                           TextColor="{DynamicResource TextPrimary}"
+                           VerticalOptions="Center" />
+                    <Button Grid.Column="1"
+                            Text="查看全部"
+                            AutomationId="BtnViewAllPlaces"
+                            FontSize="{DynamicResource FontSize13}"
+                            TextColor="{DynamicResource Primary}"
+                            BackgroundColor="Transparent"
+                            Padding="0"
+                            Command="{Binding GoToNearbyPlacesCommand}" />
+                </Grid>
+
+                <!-- 横向滚动地点卡片 -->
+                <ScrollView Orientation="Horizontal"
+                             HorizontalScrollBarVisibility="Never">
+                     <HorizontalStackLayout Spacing="12"
+                                            BindableLayout.ItemsSource="{Binding NearbyPlaces}">
+                         <BindableLayout.ItemTemplate>
+                             <DataTemplate x:DataType="models:NearbyPlace">
+                                 <Border BackgroundColor="{DynamicResource Surface}"
+                                         StrokeShape="RoundRectangle 12"
+                                         StrokeThickness="0"
+                                         WidthRequest="140"
+                                         Padding="12">
+                                     <VerticalStackLayout Spacing="8"
+                                                          HorizontalOptions="Center">
+                                         <Border BackgroundColor="{DynamicResource PrimaryLight}"
+                                                 StrokeShape="RoundRectangle 30"
+                                                 StrokeThickness="0"
+                                                 WidthRequest="60"
+                                                 HeightRequest="60"
+                                                 HorizontalOptions="Center">
+                                             <Label Text="{Binding Type}"
+                                                    FontSize="{DynamicResource FontSize22}"
+                                                    FontAttributes="Bold"
+                                                    TextColor="{DynamicResource Primary}"
+                                                    HorizontalOptions="Center"
+                                                    VerticalOptions="Center" />
+                                         </Border>
+                                         <Label Text="{Binding Name}"
+                                                FontSize="{DynamicResource FontSize14}"
+                                                FontAttributes="Bold"
+                                                TextColor="{DynamicResource TextPrimary}"
+                                                LineBreakMode="TailTruncation"
+                                                HorizontalOptions="Center" />
+                                         <Label Text="{Binding Category}"
+                                                FontSize="{DynamicResource FontSize12}"
+                                                TextColor="{DynamicResource TextSecondary}"
+                                                HorizontalOptions="Center" />
+                                         <Label Text="{Binding DistanceText}"
+                                                FontSize="{DynamicResource FontSize12}"
+                                                TextColor="{DynamicResource Primary}"
+                                                HorizontalOptions="Center" />
+                                     </VerticalStackLayout>
+                                 </Border>
+                             </DataTemplate>
+                         </BindableLayout.ItemTemplate>
+                     </HorizontalStackLayout>
+                 </ScrollView>
+            </VerticalStackLayout>
+
+            <!-- 地区入口 -->
+            <VerticalStackLayout Spacing="12">
+                <Label Text="按地区探索"
+                       FontSize="{DynamicResource FontSize18}"
+                       FontAttributes="Bold"
+                       TextColor="{DynamicResource TextPrimary}" />
+
+                <CollectionView ItemsSource="{Binding Regions}"
+                                SelectionMode="None"
+                                HorizontalOptions="Fill">
+                    <CollectionView.ItemsLayout>
+                        <GridItemsLayout Orientation="Vertical"
+                                         Span="3"
+                                         HorizontalItemSpacing="10"
+                                         VerticalItemSpacing="10" />
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:RegionGroup">
+                            <Border BackgroundColor="{DynamicResource Surface}"
+                                    StrokeShape="RoundRectangle 12"
+                                    StrokeThickness="0"
+                                    Padding="16,12"
+                                    HeightRequest="90">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:ExploreViewModel}}, Path=GoToRegionDetailCommand}"
+                                                           CommandParameter="{Binding Region}" />
+                                </Border.GestureRecognizers>
+                                <VerticalStackLayout Spacing="4"
+                                                     HorizontalOptions="Center"
+                                                     VerticalOptions="Center">
+                                    <Label Text="{Binding Region}"
+                                           FontSize="{DynamicResource FontSize15}"
+                                           FontAttributes="Bold"
+                                           TextColor="{DynamicResource TextPrimary}"
+                                           HorizontalOptions="Center" />
+                                    <Label Text="{Binding Entries.Count, StringFormat='已收录 {0} 件'}"
+                                           FontSize="{DynamicResource FontSize12}"
+                                           TextColor="{DynamicResource TextSecondary}"
+                                           HorizontalOptions="Center" />
+                                </VerticalStackLayout>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </VerticalStackLayout>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

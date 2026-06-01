@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:converters="clr-namespace:FlavorVault.Converters"
+             x:Class="FlavorVault.Controls.ShowcaseCard"
+             WidthRequest="110"
+             HorizontalOptions="Start">
+
+    <ContentView.Resources>
+        <converters:StringToUriConverter x:Key="StringToUriConverter" />
+        <converters:RarityToColorConverter x:Key="RarityToColorConverter" />
+        <converters:StringNotNullConverter x:Key="StringNotNullConverter" />
+    </ContentView.Resources>
+
+    <Border
+        StrokeShape="RoundRectangle 10"
+        StrokeThickness="0"
+        BackgroundColor="{AppThemeBinding Light={DynamicResource Surface}, Dark={DynamicResource Surface}}"
+        Padding="6">
+        <Border.Shadow>
+            <Shadow Brush="{AppThemeBinding Light=#20000000, Dark=#30000000}"
+                    Offset="0,1"
+                    Radius="4"
+                    Opacity="0.25" />
+        </Border.Shadow>
+
+        <StackLayout Spacing="4" HorizontalOptions="Center">
+
+            <!-- 方形图片 90x90 -->
+            <Border StrokeShape="RoundRectangle 8"
+                    StrokeThickness="0"
+                    WidthRequest="90"
+                    HeightRequest="90"
+                    BackgroundColor="{AppThemeBinding Light=#F0F0F0, Dark=#333333}">
+                <Grid>
+                    <!-- 底层占位 -->
+                    <Label Text="&#xf0f5;"
+                           FontFamily="fa-solid-900"
+                           FontSize="{DynamicResource FontSize24}"
+                           TextColor="{AppThemeBinding Light=#CCCCCC, Dark=#555555}"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center" />
+                    <!-- 上层图片 -->
+                    <Image Source="{Binding ImagePath, Converter={StaticResource StringToUriConverter}}"
+                           Aspect="AspectFill"
+                           IsVisible="{Binding ImagePath, Converter={StaticResource StringNotNullConverter}}" />
+                </Grid>
+            </Border>
+
+            <!-- 食物名称 -->
+            <Label Text="{Binding Name}"
+                   FontSize="{DynamicResource FontSize12}"
+                   FontAttributes="Bold"
+                   LineBreakMode="TailTruncation"
+                   HorizontalOptions="Center"
+                   TextColor="{AppThemeBinding Light={DynamicResource TextPrimary}, Dark={DynamicResource TextPrimary}}" />
+
+            <!-- 稀有度徽章 -->
+            <Border StrokeShape="RoundRectangle 4"
+                    StrokeThickness="0"
+                    Padding="6,2"
+                    BackgroundColor="{Binding Rarity, Converter={StaticResource RarityToColorConverter}}"
+                    HorizontalOptions="Center">
+                <Label Text="{Binding Rarity}"
+                       TextColor="White"
+                       FontSize="{DynamicResource FontSize9}"
+                       HorizontalOptions="Center" />
+            </Border>
+
+        </StackLayout>
+    </Border>
+</ContentView>

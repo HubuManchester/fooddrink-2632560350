@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:converters="clr-namespace:FlavorVault.Converters"
+             xmlns:models="clr-namespace:FlavorVault.Models"
+             xmlns:viewmodels="clr-namespace:FlavorVault.ViewModels"
+             x:Class="FlavorVault.Controls.WishCard"
+             x:DataType="models:WishItem">
+
+    <ContentView.Resources>
+        <converters:PriorityToColorConverter x:Key="PriorityToColorConverter" />
+        <converters:BoolToOpacityConverter x:Key="BoolToOpacityConverter" />
+        <converters:StringNotNullConverter x:Key="StringNotNullConverter" />
+    </ContentView.Resources>
+
+    <Border
+        StrokeShape="RoundRectangle 12"
+        StrokeThickness="0"
+        BackgroundColor="{AppThemeBinding Light={DynamicResource Surface}, Dark={DynamicResource Surface}}"
+        Padding="0"
+        Margin="4,2">
+        <Border.Shadow>
+            <Shadow Brush="{AppThemeBinding Light=#20000000, Dark=#30000000}"
+                    Offset="0,2"
+                    Radius="6"
+                    Opacity="0.3" />
+        </Border.Shadow>
+
+        <Grid ColumnDefinitions="4,*,Auto,Auto" Padding="0" ColumnSpacing="0">
+
+            <Border
+                Grid.Column="0"
+                BackgroundColor="{Binding Priority, Converter={StaticResource PriorityToColorConverter}}"
+                StrokeShape="RoundRectangle 3,0,0,3"
+                StrokeThickness="0" />
+
+            <Grid Grid.Column="1" RowDefinitions="Auto,Auto" Padding="12,8" RowSpacing="2">
+                <Label Grid.Row="0"
+                       Text="{Binding FoodName}"
+                       FontAttributes="Bold"
+                       FontSize="{DynamicResource FontSize14}"
+                       LineBreakMode="TailTruncation"
+                       HorizontalOptions="Start"
+                       TextColor="{AppThemeBinding Light={DynamicResource TextPrimary}, Dark={DynamicResource TextPrimary}}"
+                       Opacity="{Binding IsCompleted, Converter={StaticResource BoolToOpacityConverter}}" />
+
+                <Label Grid.Row="0"
+                       Text="{Binding FoodName}"
+                       FontAttributes="Bold"
+                       FontSize="{DynamicResource FontSize14}"
+                       LineBreakMode="TailTruncation"
+                       HorizontalOptions="Start"
+                       TextColor="{AppThemeBinding Light=#999999, Dark=#777777}"
+                       TextDecorations="Strikethrough"
+                       IsVisible="{Binding IsCompleted}" />
+
+                <HorizontalStackLayout Grid.Row="1" Spacing="6">
+                    <Label Text="{Binding Priority}"
+                           FontSize="{DynamicResource FontSize11}"
+                           TextColor="{Binding Priority, Converter={StaticResource PriorityToColorConverter}}" />
+                    <Label Text="{Binding Region}"
+                           FontSize="{DynamicResource FontSize11}"
+                           TextColor="{AppThemeBinding Light={DynamicResource TextSecondary}, Dark={DynamicResource TextSecondary}}"
+                           IsVisible="{Binding Region, Converter={StaticResource StringNotNullConverter}}" />
+                    <Label Text="{Binding SourceReason}"
+                           FontSize="{DynamicResource FontSize11}"
+                           LineBreakMode="TailTruncation"
+                           TextColor="{AppThemeBinding Light=#999999, Dark=#777777}"
+                           IsVisible="{Binding SourceReason, Converter={StaticResource StringNotNullConverter}}" />
+                </HorizontalStackLayout>
+            </Grid>
+
+            <Button
+                Grid.Column="2"
+                Margin="0,0,4,0"
+                WidthRequest="36"
+                HeightRequest="36"
+                MinimumWidthRequest="44"
+                MinimumHeightRequest="44"
+                Padding="0"
+                BackgroundColor="Transparent"
+                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:WishListViewModel}}, Path=ToggleCompleteCommand}"
+                CommandParameter="{Binding}"
+                AutomationId="WishCardToggleCompleteButton">
+                <Button.ImageSource>
+                    <FontImageSource
+                        Glyph="&#xf096;"
+                        FontFamily="fa-solid-900"
+                        Size="20"
+                        Color="{AppThemeBinding Light={DynamicResource TextSecondary}, Dark={DynamicResource TextSecondary}}" />
+                </Button.ImageSource>
+            </Button>
+
+            <Border
+                Grid.Column="2"
+                Margin="0,0,4,0"
+                WidthRequest="36"
+                HeightRequest="36"
+                BackgroundColor="#4CAF50"
+                StrokeShape="RoundRectangle 18"
+                StrokeThickness="0"
+                IsVisible="{Binding IsCompleted}"
+                HorizontalOptions="Center"
+                VerticalOptions="Center">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer
+                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:WishListViewModel}}, Path=ToggleCompleteCommand}"
+                        CommandParameter="{Binding}" />
+                </Border.GestureRecognizers>
+                <Label Text="&#xf00c;"
+                       FontFamily="fa-solid-900"
+                       FontSize="{DynamicResource FontSize14}"
+                       TextColor="White"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center" />
+            </Border>
+
+            <Button
+                Grid.Column="3"
+                Margin="0,0,8,0"
+                WidthRequest="36"
+                HeightRequest="36"
+                MinimumWidthRequest="44"
+                MinimumHeightRequest="44"
+                Padding="0"
+                BackgroundColor="Transparent"
+                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:WishListViewModel}}, Path=DeleteWishCommand}"
+                CommandParameter="{Binding}"
+                AutomationId="WishCardDeleteButton">
+                <Button.ImageSource>
+                    <FontImageSource
+                        Glyph="&#xf1f8;"
+                        FontFamily="fa-solid-900"
+                        Size="16"
+                        Color="{AppThemeBinding Light=#B00020, Dark=#FF5252}" />
+                </Button.ImageSource>
+            </Button>
+
+        </Grid>
+    </Border>
+</ContentView>

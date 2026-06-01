@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:FlavorVault.ViewModels"
+             xmlns:converters="clr-namespace:FlavorVault.Converters"
+             xmlns:controls="clr-namespace:FlavorVault.Controls"
+             x:Class="FlavorVault.Views.CollectionDetailPage"
+             x:DataType="viewmodels:CollectionDetailViewModel"
+             Title="收藏集详情"
+             BackgroundColor="{DynamicResource Background}">
+
+    <ContentPage.Resources>
+        <converters:StringToUriConverter x:Key="StringToUriConverter" />
+        <converters:ColorTagToColorConverter x:Key="ColorTagToColorConverter" />
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="200,Auto,Auto,*,Auto"
+          RowSpacing="0">
+
+        <!-- 封面区 -->
+        <Grid Grid.Row="0"
+              HeightRequest="200">
+            <!-- 底层占位 -->
+            <Border BackgroundColor="{DynamicResource PrimaryLight}"
+                    StrokeShape="RoundRectangle 0"
+                    StrokeThickness="0">
+                <Label Text="&#xf07b;"
+                       FontFamily="fa-solid-900"
+                       FontSize="{DynamicResource FontSize48}"
+                       TextColor="{DynamicResource TextSecondary}"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center" />
+            </Border>
+
+            <!-- 封面图片 -->
+            <Image Source="{Binding Collection.CoverImagePath, Converter={StaticResource StringToUriConverter}}"
+                   Aspect="AspectFill" />
+
+            <!-- 渐变遮罩 -->
+            <BoxView BackgroundColor="#80000000"
+                     VerticalOptions="End"
+                     HeightRequest="80" />
+
+            <!-- 收藏集名称叠加 -->
+            <VerticalStackLayout VerticalOptions="End"
+                                 Padding="16,0,16,12"
+                                 Spacing="4">
+                <Label Text="{Binding Collection.Name}"
+                       FontSize="{DynamicResource FontSize22}"
+                       FontAttributes="Bold"
+                       TextColor="White" />
+                <HorizontalStackLayout Spacing="8">
+                    <Border BackgroundColor="{Binding Collection.ColorTag, Converter={StaticResource ColorTagToColorConverter}}"
+                            StrokeShape="RoundRectangle 10"
+                            StrokeThickness="0"
+                            Padding="8,3">
+                        <Label Text="{Binding Collection.Theme}"
+                               FontSize="{DynamicResource FontSize12}"
+                               TextColor="White" />
+                    </Border>
+                    <Label Text="{Binding StatsText}"
+                           FontSize="{DynamicResource FontSize13}"
+                           TextColor="#DDDDDD"
+                           VerticalOptions="Center" />
+                </HorizontalStackLayout>
+            </VerticalStackLayout>
+
+            <!-- 返回按钮 -->
+            <Border BackgroundColor="#66000000"
+                    StrokeShape="RoundRectangle 18"
+                    StrokeThickness="0"
+                    WidthRequest="36"
+                    HeightRequest="36"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Start"
+                    Margin="12,40,0,0">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding EditCollectionCommand}" />
+                </Border.GestureRecognizers>
+                <Label Text="&#xf060;"
+                       FontFamily="fa-solid-900"
+                       FontSize="{DynamicResource FontSize14}"
+                       TextColor="White"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center" />
+            </Border>
+        </Grid>
+
+        <!-- 描述 -->
+        <VerticalStackLayout Grid.Row="1"
+                             Padding="16,8"
+                             Spacing="4">
+            <Label Text="{Binding Collection.Description}"
+                   FontSize="{DynamicResource FontSize14}"
+                   TextColor="{DynamicResource TextSecondary}"
+                   LineBreakMode="WordWrap" />
+        </VerticalStackLayout>
+
+        <!-- 排序栏 -->
+        <HorizontalStackLayout Grid.Row="2"
+                               Padding="16,4,16,8"
+                               Spacing="8">
+            <Button Text="星级排序"
+                    AutomationId="BtnSortStar"
+                    Command="{Binding SortByRatingCommand}"
+                    FontSize="{DynamicResource FontSize13}"
+                    Padding="12,5"
+                    HeightRequest="32" />
+            <Button Text="稀有度排序"
+                    AutomationId="BtnSortRarity"
+                    Command="{Binding SortByRarityCommand}"
+                    FontSize="{DynamicResource FontSize13}"
+                    Padding="12,5"
+                    HeightRequest="32" />
+            <Button Text="最近添加"
+                    AutomationId="BtnSortRecent"
+                    Command="{Binding SortByRecentCommand}"
+                    FontSize="{DynamicResource FontSize13}"
+                    Padding="12,5"
+                    HeightRequest="32" />
+        </HorizontalStackLayout>
+
+        <!-- 藏品列表 -->
+        <CollectionView Grid.Row="3"
+                        ItemsSource="{Binding Entries}"
+                        SelectionMode="None"
+                        Margin="12,0">
+            <CollectionView.ItemsLayout>
+                <GridItemsLayout Orientation="Vertical"
+                                 Span="2"
+                                 HorizontalItemSpacing="8"
+                                 VerticalItemSpacing="8" />
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <controls:CatalogGridCard />
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+            <CollectionView.EmptyView>
+                <VerticalStackLayout HorizontalOptions="Center"
+                                     VerticalOptions="Center"
+                                     Spacing="8"
+                                     Grid.ColumnSpan="2">
+                    <Label Text="&#xf07b;"
+                           FontFamily="fa-solid-900"
+                           FontSize="{DynamicResource FontSize36}"
+                           TextColor="{DynamicResource TextSecondary}"
+                           HorizontalOptions="Center" />
+                    <Label Text="该收藏集暂无藏品"
+                           FontSize="{DynamicResource FontSize15}"
+                           TextColor="{DynamicResource TextSecondary}"
+                           HorizontalOptions="Center" />
+                </VerticalStackLayout>
+            </CollectionView.EmptyView>
+        </CollectionView>
+
+        <!-- 底部操作栏 -->
+        <Border Grid.Row="4"
+                BackgroundColor="{DynamicResource Surface}"
+                StrokeShape="RoundRectangle 0"
+                StrokeThickness="0"
+                Padding="16,12"
+                VerticalOptions="End">
+            <Grid ColumnDefinitions="*,*"
+                  ColumnSpacing="12">
+                <Button Grid.Column="0"
+                        Text="&#xf044; 编辑收藏集"
+                        AutomationId="BtnEditCollection"
+                        FontFamily="fa-solid-900"
+                        FontSize="{DynamicResource FontSize14}"
+                        BackgroundColor="{DynamicResource PrimaryLight}"
+                        TextColor="{DynamicResource Primary}"
+                        HeightRequest="44"
+                        CornerRadius="22"
+                        Command="{Binding EditCollectionCommand}" />
+                <Button Grid.Column="1"
+                        Text="&#xf067; 添加条目"
+                        AutomationId="BtnAddEntry"
+                        FontFamily="fa-solid-900"
+                        FontSize="{DynamicResource FontSize14}"
+                        BackgroundColor="{DynamicResource Primary}"
+                        TextColor="White"
+                        HeightRequest="44"
+                        CornerRadius="22"
+                        Command="{Binding AddEntryCommand}" />
+            </Grid>
+        </Border>
+    </Grid>
+</ContentPage>
