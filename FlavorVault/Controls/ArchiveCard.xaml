@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="FlavorVault.Controls.ArchiveCard"
+             x:Name="This">
+
+    <Border
+        StrokeShape="RoundRectangle 12"
+        StrokeThickness="0"
+        BackgroundColor="{AppThemeBinding Light={DynamicResource Surface}, Dark={DynamicResource Surface}}"
+        Padding="12"
+        Margin="4">
+        <Border.Shadow>
+            <Shadow Brush="{AppThemeBinding Light=#20000000, Dark=#30000000}"
+                    Offset="0,2"
+                    Radius="6"
+                    Opacity="0.3" />
+        </Border.Shadow>
+
+        <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,*,*" RowSpacing="12" ColumnSpacing="8">
+
+            <!-- Title -->
+            <Label Grid.Row="0" Grid.ColumnSpan="3"
+                   Text="Catalog Stats"
+                   FontAttributes="Bold"
+                   FontSize="{DynamicResource FontSize16}"
+                   TextColor="{AppThemeBinding Light={DynamicResource TextPrimary}, Dark={DynamicResource TextPrimary}}" />
+
+            <!-- Row 1 -->
+            <!-- Total entries (Primary color) -->
+            <Grid Grid.Row="1" Grid.Column="0" RowDefinitions="Auto,Auto,2" RowSpacing="2"
+                  HorizontalOptions="Fill">
+                <Label Grid.Row="0"
+                       Text="{Binding Source={x:Reference This}, Path=TotalEntries}"
+                       FontSize="{DynamicResource FontSize22}" FontAttributes="Bold"
+                       TextColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource Primary}}"
+                       HorizontalOptions="Center" />
+                <Label Grid.Row="1"
+                       Text="Total" FontSize="{DynamicResource FontSize10}"
+                       TextColor="{AppThemeBinding Light={DynamicResource TextSecondary}, Dark={DynamicResource TextSecondary}}"
+                       HorizontalOptions="Center" />
+                <BoxView Grid.Row="2" HeightRequest="2"
+                         Color="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource Primary}}"
+                         HorizontalOptions="Fill"
+                         Margin="8,0" />
+            </Grid>
+
+            <!-- Collected (green) -->
+            <Grid Grid.Row="1" Grid.Column="1" RowDefinitions="Auto,Auto,2" RowSpacing="2"
+                  HorizontalOptions="Fill">
+                <Label Grid.Row="0"
+                       Text="{Binding Source={x:Reference This}, Path=CollectedCount}"
+                       FontSize="{DynamicResource FontSize22}" FontAttributes="Bold"
+                       TextColor="#4CAF50"
+                       HorizontalOptions="Center" />
+                <Label Grid.Row="1"
+                       Text="Collected" FontSize="{DynamicResource FontSize10}"
+                       TextColor="{AppThemeBinding Light={DynamicResource TextSecondary}, Dark={DynamicResource TextSecondary}}"
+                       HorizontalOptions="Center" />
+                <BoxView Grid.Row="2" HeightRequest="2"
+                         Color="#4CAF50"
+                         HorizontalOptions="Fill"
+                         Margin="8,0" />
+            </Grid>
+
+            <!-- Want to try (orange) -->
+            <Grid Grid.Row="1" Grid.Column="2" RowDefinitions="Auto,Auto,2" RowSpacing="2"
+                  HorizontalOptions="Fill">
+                <Label Grid.Row="0"
+                       Text="{Binding Source={x:Reference This}, Path=WantToTryCount}"
+                       FontSize="{DynamicResource FontSize22}" FontAttributes="Bold"
+                       TextColor="#FF9800"
+                       HorizontalOptions="Center" />
+                <Label Grid.Row="1"
+                       Text="Want To Try" FontSize="{DynamicResource FontSize10}"
+                       TextColor="{AppThemeBinding Light={DynamicResource TextSecondary}, Dark={DynamicResource TextSecondary}}"
+                       HorizontalOptions="Center" />
+                <BoxView Grid.Row="2" HeightRequest="2"
+                         Color="#FF9800"
+                         HorizontalOptions="Fill"
+                         Margin="8,0" />
+            </Grid>
+
+            <!-- Row 2 -->
+            <!-- Showcase picks (gold) -->
+            <Grid Grid.Row="2" Grid.Column="0" RowDefinitions="Auto,Auto,2" RowSpacing="2"
+                  HorizontalOptions="Fill">
+                <Label Grid.Row="0"
+                       Text="{Binding Source={x:Reference This}, Path=ShowcaseCount}"
+                       FontSize="{DynamicResource FontSize22}" FontAttributes="Bold"
+                       TextColor="#FFB300"
+                       HorizontalOptions="Center" />
+                <Label Grid.Row="1"
+                       Text="Showcase" FontSize="{DynamicResource FontSize10}"
+                       TextColor="{AppThemeBinding Light={DynamicResource TextSecondary}, Dark={DynamicResource TextSecondary}}"
+                       HorizontalOptions="Center" />
+                <BoxView Grid.Row="2" HeightRequest="2"
+                         Color="#FFB300"
+                         HorizontalOptions="Fill"
+                         Margin="8,0" />
+            </Grid>
+
+            <!-- Collections (blue) -->
+            <Grid Grid.Row="2" Grid.Column="1" RowDefinitions="Auto,Auto,2" RowSpacing="2"
+                  HorizontalOptions="Fill">
+                <Label Grid.Row="0"
+                       Text="{Binding Source={x:Reference This}, Path=CollectionCount}"
+                       FontSize="{DynamicResource FontSize22}" FontAttributes="Bold"
+                       TextColor="#2196F3"
+                       HorizontalOptions="Center" />
+                <Label Grid.Row="1"
+                       Text="Collections" FontSize="{DynamicResource FontSize10}"
+                       TextColor="{AppThemeBinding Light={DynamicResource TextSecondary}, Dark={DynamicResource TextSecondary}}"
+                       HorizontalOptions="Center" />
+                <BoxView Grid.Row="2" HeightRequest="2"
+                         Color="#2196F3"
+                         HorizontalOptions="Fill"
+                         Margin="8,0" />
+            </Grid>
+
+            <!-- Location pins (purple) -->
+            <Grid Grid.Row="2" Grid.Column="2" RowDefinitions="Auto,Auto,2" RowSpacing="2"
+                  HorizontalOptions="Fill">
+                <Label Grid.Row="0"
+                       Text="{Binding Source={x:Reference This}, Path=PlaceMarkCount}"
+                       FontSize="{DynamicResource FontSize22}" FontAttributes="Bold"
+                       TextColor="#9C27B0"
+                       HorizontalOptions="Center" />
+                <Label Grid.Row="1"
+                       Text="Locations" FontSize="{DynamicResource FontSize10}"
+                       TextColor="{AppThemeBinding Light={DynamicResource TextSecondary}, Dark={DynamicResource TextSecondary}}"
+                       HorizontalOptions="Center" />
+                <BoxView Grid.Row="2" HeightRequest="2"
+                         Color="#9C27B0"
+                         HorizontalOptions="Fill"
+                         Margin="8,0" />
+            </Grid>
+
+        </Grid>
+    </Border>
+</ContentView>

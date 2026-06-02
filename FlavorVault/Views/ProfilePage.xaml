@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:FlavorVault.ViewModels"
+             xmlns:models="clr-namespace:FlavorVault.Models"
+             xmlns:converters="clr-namespace:FlavorVault.Converters"
+             x:Class="FlavorVault.Views.ProfilePage"
+             x:DataType="viewmodels:ProfileViewModel"
+             Title="Profile"
+              BackgroundColor="{DynamicResource Background}">
+
+    <ContentPage.Resources>
+        <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="16" Padding="16" VerticalOptions="Start">
+
+            <!-- ========== User Info ========== -->
+            <Border StrokeShape="RoundRectangle 12" StrokeThickness="0"
+                    BackgroundColor="{DynamicResource Surface}" Padding="16">
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="16">
+                    <Border Grid.Column="0"
+                            BackgroundColor="{DynamicResource PrimaryLight}"
+                            StrokeShape="RoundRectangle 36"
+                            StrokeThickness="0"
+                            WidthRequest="64" HeightRequest="64"
+                            HorizontalOptions="Start" VerticalOptions="Center">
+                        <Label Text="&#xf007;"
+                               FontFamily="fa-solid-900" FontSize="{DynamicResource FontSize24}"
+                               TextColor="{DynamicResource Primary}"
+                               HorizontalOptions="Center" VerticalOptions="Center" />
+                    </Border>
+                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="4">
+                        <Label Text="{Binding LoginUsername}"
+                               FontSize="{DynamicResource FontSize20}" FontAttributes="Bold"
+                               TextColor="{DynamicResource TextPrimary}"
+                               IsVisible="{Binding IsLoggedIn}" />
+                        <Label Text="Not Signed In"
+                                FontSize="{DynamicResource FontSize18}" FontAttributes="Bold"
+                                TextColor="{DynamicResource TextSecondary}"
+                                IsVisible="{Binding IsLoggedIn, Converter={StaticResource InverseBoolConverter}}" />
+                        <Button Text="&#xf2f6; Sign In"
+                                FontFamily="fa-solid-900"
+                                FontSize="{DynamicResource FontSize12}"
+                                BackgroundColor="{DynamicResource Primary}"
+                                TextColor="White"
+                                Padding="12,4"
+                                HeightRequest="32"
+                                HorizontalOptions="Start"
+                                Command="{Binding GoToLoginCommand}"
+                                IsVisible="{Binding IsLoggedIn, Converter={StaticResource InverseBoolConverter}}" />
+                        <Label Text="Nickname"
+                               FontSize="{DynamicResource FontSize11}" TextColor="{DynamicResource TextSecondary}" />
+                        <Entry Text="{Binding UserName, Mode=TwoWay}"
+                               Placeholder="Enter your name"
+                               FontSize="{DynamicResource FontSize14}"
+                               TextColor="{DynamicResource TextPrimary}"
+                               BackgroundColor="Transparent" />
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
+
+            <!-- ========== Catalog Stats (6-cell grid) ========== -->
+            <Border StrokeShape="RoundRectangle 12" StrokeThickness="0"
+                    BackgroundColor="{DynamicResource Surface}" Padding="12">
+                <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="*,*,*"
+                      RowSpacing="12" ColumnSpacing="8">
+                    <!-- Title -->
+                    <Label Grid.Row="0" Grid.ColumnSpan="3" Text="Catalog Stats"
+                           FontSize="{DynamicResource FontSize16}" FontAttributes="Bold"
+                           TextColor="{DynamicResource TextPrimary}" />
+
+                    <!-- Total entries -->
+                    <VerticalStackLayout Grid.Row="1" Grid.Column="0" Spacing="2" HorizontalOptions="Center">
+                        <Label Text="{Binding TotalEntries}" FontSize="{DynamicResource FontSize24}" FontAttributes="Bold"
+                               TextColor="{DynamicResource Primary}" HorizontalOptions="Center" />
+                        <Label Text="Total" FontSize="{DynamicResource FontSize10}" TextColor="{DynamicResource TextSecondary}" HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+                    <!-- Collected -->
+                    <VerticalStackLayout Grid.Row="1" Grid.Column="1" Spacing="2" HorizontalOptions="Center">
+                        <Label Text="{Binding CollectedCount}" FontSize="{DynamicResource FontSize24}" FontAttributes="Bold"
+                               TextColor="#4CAF50" HorizontalOptions="Center" />
+                        <Label Text="Collected" FontSize="{DynamicResource FontSize10}" TextColor="{DynamicResource TextSecondary}" HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+                    <!-- Want to try -->
+                    <VerticalStackLayout Grid.Row="1" Grid.Column="2" Spacing="2" HorizontalOptions="Center">
+                        <Label Text="{Binding WantToTryCount}" FontSize="{DynamicResource FontSize24}" FontAttributes="Bold"
+                               TextColor="#FF9800" HorizontalOptions="Center" />
+                        <Label Text="Want to Try" FontSize="{DynamicResource FontSize10}" TextColor="{DynamicResource TextSecondary}" HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+
+                    <!-- Showcase picks -->
+                    <VerticalStackLayout Grid.Row="2" Grid.Column="0" Spacing="2" HorizontalOptions="Center">
+                        <Label Text="{Binding ShowcaseCount}" FontSize="{DynamicResource FontSize24}" FontAttributes="Bold"
+                               TextColor="#FFB300" HorizontalOptions="Center" />
+                        <Label Text="Showcase" FontSize="{DynamicResource FontSize10}" TextColor="{DynamicResource TextSecondary}" HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+                    <!-- Collections -->
+                    <VerticalStackLayout Grid.Row="2" Grid.Column="1" Spacing="2" HorizontalOptions="Center">
+                        <Label Text="{Binding CollectionCount}" FontSize="{DynamicResource FontSize24}" FontAttributes="Bold"
+                               TextColor="#2196F3" HorizontalOptions="Center" />
+                        <Label Text="Collections" FontSize="{DynamicResource FontSize10}" TextColor="{DynamicResource TextSecondary}" HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+                    <!-- Location pins -->
+                    <VerticalStackLayout Grid.Row="2" Grid.Column="2" Spacing="2" HorizontalOptions="Center">
+                        <Label Text="{Binding PlaceMarkCount}" FontSize="{DynamicResource FontSize24}" FontAttributes="Bold"
+                               TextColor="#9C27B0" HorizontalOptions="Center" />
+                        <Label Text="Locations" FontSize="{DynamicResource FontSize10}" TextColor="{DynamicResource TextSecondary}" HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
+
+            <!-- ========== Region Progress ========== -->
+            <Border StrokeShape="RoundRectangle 12" StrokeThickness="0"
+                    BackgroundColor="{DynamicResource Surface}" Padding="16">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Region Progress" FontSize="{DynamicResource FontSize16}" FontAttributes="Bold"
+                           TextColor="{DynamicResource TextPrimary}" />
+                    <CollectionView ItemsSource="{Binding RegionProgressList}"
+                                    SelectionMode="None"
+                                    HeightRequest="210">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:RegionProgress">
+                                <Grid ColumnDefinitions="55,*,40" HeightRequest="22" Margin="0,1">
+                                    <Label Grid.Column="0" Text="{Binding Region}"
+                                           FontSize="{DynamicResource FontSize12}" TextColor="{DynamicResource TextSecondary}"
+                                           VerticalOptions="Center" />
+                                    <ProgressBar Grid.Column="1"
+                                                 Progress="{Binding ProgressPercent}"
+                                                 ProgressColor="{DynamicResource Primary}"
+                                                 VerticalOptions="Center" HeightRequest="6" />
+                                    <Label Grid.Column="2" Text="{Binding ProgressText}"
+                                           FontSize="{DynamicResource FontSize11}" TextColor="{DynamicResource TextSecondary}"
+                                           VerticalOptions="Center" HorizontalOptions="End" />
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- ========== Settings ========== -->
+            <Border StrokeShape="RoundRectangle 12" StrokeThickness="0"
+                    BackgroundColor="{DynamicResource Surface}" Padding="16">
+                <VerticalStackLayout Spacing="14">
+                    <Label Text="Settings" FontSize="{DynamicResource FontSize16}" FontAttributes="Bold"
+                           TextColor="{DynamicResource TextPrimary}" />
+
+                    <!-- Theme toggle -->
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="Theme Mode" FontSize="{DynamicResource FontSize13}" TextColor="{DynamicResource TextSecondary}" />
+                        <HorizontalStackLayout Spacing="8">
+                            <Button Text="Light" Command="{Binding SetThemeCommand}" CommandParameter="Light"
+                                    FontSize="{DynamicResource FontSize13}" Padding="16,4" HeightRequest="34" CornerRadius="17" />
+                            <Button Text="Dark" Command="{Binding SetThemeCommand}" CommandParameter="Dark"
+                                    FontSize="{DynamicResource FontSize13}" Padding="16,4" HeightRequest="34" CornerRadius="17" />
+                            <Button Text="System" Command="{Binding SetThemeCommand}" CommandParameter="System"
+                                    FontSize="{DynamicResource FontSize13}" Padding="16,4" HeightRequest="34" CornerRadius="17" />
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+
+                    <!-- Font size -->
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="Font Size" FontSize="{DynamicResource FontSize13}" TextColor="{DynamicResource TextSecondary}" />
+                        <HorizontalStackLayout Spacing="8">
+                            <Button Text="S" Command="{Binding SetFontSizeCommand}" CommandParameter="Small"
+                                    FontSize="{DynamicResource FontSize13}" Padding="14,4" HeightRequest="34" CornerRadius="17" />
+                            <Button Text="M" Command="{Binding SetFontSizeCommand}" CommandParameter="Medium"
+                                    FontSize="{DynamicResource FontSize13}" Padding="14,4" HeightRequest="34" CornerRadius="17" />
+                            <Button Text="L" Command="{Binding SetFontSizeCommand}" CommandParameter="Large"
+                                    FontSize="{DynamicResource FontSize13}" Padding="14,4" HeightRequest="34" CornerRadius="17" />
+                            <Button Text="XL" Command="{Binding SetFontSizeCommand}" CommandParameter="ExtraLarge"
+                                    FontSize="{DynamicResource FontSize13}" Padding="14,4" HeightRequest="34" CornerRadius="17" />
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+
+                    <BoxView HeightRequest="1" BackgroundColor="{DynamicResource Divider}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- ========== Features ========== -->
+            <Border StrokeShape="RoundRectangle 12" StrokeThickness="0"
+                    BackgroundColor="{DynamicResource Surface}" Padding="4">
+                <VerticalStackLayout>
+                    <!-- Voice input test -->
+                    <Grid ColumnDefinitions="40,*,Auto" Padding="12,12" HeightRequest="48">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding TestVoiceInputCommand}" />
+                        </Grid.GestureRecognizers>
+                        <Label Grid.Column="0" Text="&#xf130;" FontFamily="fa-solid-900"
+                               FontSize="{DynamicResource FontSize16}" TextColor="{DynamicResource Primary}"
+                               HorizontalOptions="Center" VerticalOptions="Center" />
+                        <Label Grid.Column="1" Text="Voice Input Test"
+                               FontSize="{DynamicResource FontSize15}" TextColor="{DynamicResource TextPrimary}" VerticalOptions="Center" />
+                        <Label Grid.Column="2" Text="&#xf054;" FontFamily="fa-solid-900"
+                               FontSize="{DynamicResource FontSize12}" TextColor="{DynamicResource TextSecondary}"
+                               HorizontalOptions="End" VerticalOptions="Center" />
+                    </Grid>
+                    <BoxView HeightRequest="0.5" BackgroundColor="{DynamicResource Divider}" Margin="52,0" />
+
+                    <!-- TTS test -->
+                    <Grid ColumnDefinitions="40,*,Auto" Padding="12,12" HeightRequest="48">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding TestTtsCommand}" />
+                        </Grid.GestureRecognizers>
+                        <Label Grid.Column="0" Text="&#xf028;" FontFamily="fa-solid-900"
+                               FontSize="{DynamicResource FontSize16}" TextColor="{DynamicResource Primary}"
+                               HorizontalOptions="Center" VerticalOptions="Center" />
+                        <Label Grid.Column="1" Text="Text-to-Speech Test"
+                               FontSize="{DynamicResource FontSize15}" TextColor="{DynamicResource TextPrimary}" VerticalOptions="Center" />
+                        <Label Grid.Column="2" Text="&#xf054;" FontFamily="fa-solid-900"
+                               FontSize="{DynamicResource FontSize12}" TextColor="{DynamicResource TextSecondary}"
+                               HorizontalOptions="End" VerticalOptions="Center" />
+                    </Grid>
+                    <BoxView HeightRequest="0.5" BackgroundColor="{DynamicResource Divider}" Margin="52,0" />
+
+                    <!-- Haptic test -->
+                    <Grid ColumnDefinitions="40,*,Auto" Padding="12,12" HeightRequest="48">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding TestHapticCommand}" />
+                        </Grid.GestureRecognizers>
+                        <Label Grid.Column="0" Text="&#xf0f4;" FontFamily="fa-solid-900"
+                               FontSize="{DynamicResource FontSize16}" TextColor="{DynamicResource Primary}"
+                               HorizontalOptions="Center" VerticalOptions="Center" />
+                        <Label Grid.Column="1" Text="Haptic Test"
+                               FontSize="{DynamicResource FontSize15}" TextColor="{DynamicResource TextPrimary}" VerticalOptions="Center" />
+                        <Label Grid.Column="2" Text="&#xf054;" FontFamily="fa-solid-900"
+                               FontSize="{DynamicResource FontSize12}" TextColor="{DynamicResource TextSecondary}"
+                               HorizontalOptions="End" VerticalOptions="Center" />
+                    </Grid>
+                    <BoxView HeightRequest="0.5" BackgroundColor="{DynamicResource Divider}" Margin="52,0" />
+
+                    <!-- Nearby landmarks -->
+                    <Grid ColumnDefinitions="40,*,Auto" Padding="12,12" HeightRequest="48">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding GoToNearbyPlacesCommand}" />
+                        </Grid.GestureRecognizers>
+                        <Label Grid.Column="0" Text="&#xf3c5;" FontFamily="fa-solid-900"
+                               FontSize="{DynamicResource FontSize16}" TextColor="{DynamicResource Primary}"
+                               HorizontalOptions="Center" VerticalOptions="Center" />
+                        <Label Grid.Column="1" Text="Nearby Landmarks"
+                               FontSize="{DynamicResource FontSize15}" TextColor="{DynamicResource TextPrimary}" VerticalOptions="Center" />
+                        <Label Grid.Column="2" Text="&#xf054;" FontFamily="fa-solid-900"
+                               FontSize="{DynamicResource FontSize12}" TextColor="{DynamicResource TextSecondary}"
+                               HorizontalOptions="End" VerticalOptions="Center" />
+                    </Grid>
+                    <BoxView HeightRequest="0.5" BackgroundColor="{DynamicResource Divider}" Margin="52,0" />
+
+                    <!-- About -->
+                    <Grid ColumnDefinitions="40,*,Auto" Padding="12,12" HeightRequest="48">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding GoToAboutCommand}" />
+                        </Grid.GestureRecognizers>
+                        <Label Grid.Column="0" Text="&#xf05a;" FontFamily="fa-solid-900"
+                               FontSize="{DynamicResource FontSize16}" TextColor="{DynamicResource Primary}"
+                               HorizontalOptions="Center" VerticalOptions="Center" />
+                        <Label Grid.Column="1" Text="About App"
+                               FontSize="{DynamicResource FontSize15}" TextColor="{DynamicResource TextPrimary}" VerticalOptions="Center" />
+                        <Label Grid.Column="2" Text="&#xf054;" FontFamily="fa-solid-900"
+                               FontSize="{DynamicResource FontSize12}" TextColor="{DynamicResource TextSecondary}"
+                               HorizontalOptions="End" VerticalOptions="Center" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- ========== Account Actions ========== -->
+            <Border StrokeShape="RoundRectangle 12" StrokeThickness="0"
+                    BackgroundColor="{DynamicResource Surface}" Padding="4"
+                    IsVisible="{Binding IsLoggedIn}">
+                <Grid ColumnDefinitions="40,*,Auto" Padding="12,12" HeightRequest="48">
+                    <Grid.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding LogoutCommand}" />
+                    </Grid.GestureRecognizers>
+                    <Label Grid.Column="0" Text="&#xf2f5;" FontFamily="fa-solid-900"
+                           FontSize="{DynamicResource FontSize16}" TextColor="#FF9800"
+                           HorizontalOptions="Center" VerticalOptions="Center" />
+                    <Label Grid.Column="1" Text="Sign Out"
+                           FontSize="{DynamicResource FontSize15}" TextColor="#FF9800" VerticalOptions="Center" />
+                    <Label Grid.Column="2" Text="&#xf054;" FontFamily="fa-solid-900"
+                           FontSize="{DynamicResource FontSize12}" TextColor="#FF9800"
+                           HorizontalOptions="End" VerticalOptions="Center" />
+                </Grid>
+            </Border>
+
+            <!-- ========== Danger Zone ========== -->
+            <Border StrokeShape="RoundRectangle 12" StrokeThickness="0"
+                    BackgroundColor="{DynamicResource Surface}" Padding="4">
+                <Grid ColumnDefinitions="40,*,Auto" Padding="12,12" HeightRequest="48">
+                    <Grid.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding ResetDataCommand}" />
+                    </Grid.GestureRecognizers>
+                    <Label Grid.Column="0" Text="&#xf2ed;" FontFamily="fa-solid-900"
+                           FontSize="{DynamicResource FontSize16}" TextColor="#E53935"
+                           HorizontalOptions="Center" VerticalOptions="Center" />
+                    <Label Grid.Column="1" Text="Reset All Data"
+                           FontSize="{DynamicResource FontSize15}" TextColor="#E53935" VerticalOptions="Center" />
+                    <Label Grid.Column="2" Text="&#xf054;" FontFamily="fa-solid-900"
+                           FontSize="{DynamicResource FontSize12}" TextColor="#E53935"
+                           HorizontalOptions="End" VerticalOptions="Center" />
+                </Grid>
+            </Border>
+
+            <!-- Bottom spacing -->
+            <BoxView HeightRequest="24" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

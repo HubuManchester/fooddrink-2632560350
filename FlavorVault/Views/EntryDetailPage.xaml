@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:FlavorVault.ViewModels"
+             xmlns:converters="clr-namespace:FlavorVault.Converters"
+             x:Class="FlavorVault.Views.EntryDetailPage"
+             x:DataType="viewmodels:EntryDetailViewModel"
+             Title="Entry Details"
+             BackgroundColor="{DynamicResource Background}">
+
+    <ContentPage.Resources>
+        <converters:StringToUriConverter x:Key="StringToUriConverter" />
+        <converters:StringNotNullConverter x:Key="StringNotNullConverter" />
+        <converters:RarityToColorConverter x:Key="RarityToColorConverter" />
+        <converters:RatingToStarConverter x:Key="RatingToStarConverter" />
+        <converters:NotNullConverter x:Key="NotNullConverter" />
+        <converters:NullToBoolConverter x:Key="NullToBoolConverter" />
+        <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
+        <converters:PriceRangeToStringConverter x:Key="PriceRangeToStringConverter" />
+        <converters:BoolToColorConverter x:Key="ShowcaseColorConverter"
+                                         TrueColor="#FFB300"
+                                         FalseColor="#9E9E9E" />
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="280,*,Auto">
+
+        <!-- Top image area -->
+        <Grid Grid.Row="0"
+              HeightRequest="280">
+            <!-- Background placeholder -->
+            <Border BackgroundColor="{DynamicResource PrimaryLight}"
+                    StrokeThickness="0">
+                <VerticalStackLayout HorizontalOptions="Center"
+                                     VerticalOptions="Center"
+                                     Spacing="8">
+                    <Label FontFamily="fa-solid-900"
+                           Text="&#xf0f5;"
+                           FontSize="{DynamicResource FontSize48}"
+                           TextColor="{DynamicResource TextSecondary}"
+                           HorizontalOptions="Center" />
+                    <Label Text="No Image"
+                           FontSize="{DynamicResource FontSize14}"
+                           TextColor="{DynamicResource TextSecondary}"
+                           HorizontalOptions="Center" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Image layer -->
+            <Image Source="{Binding Entry.ImagePath, Converter={StaticResource StringToUriConverter}}"
+                   Aspect="AspectFill"
+                   HorizontalOptions="Fill"
+                   VerticalOptions="Fill" />
+
+            <!-- Top-left back button -->
+            <Border HorizontalOptions="Start"
+                    VerticalOptions="Start"
+                    Margin="16,16"
+                    WidthRequest="40"
+                    HeightRequest="40"
+                    StrokeShape="RoundRectangle 20"
+                    BackgroundColor="#80000000"
+                    StrokeThickness="0">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding GoBackCommand}" />
+                </Border.GestureRecognizers>
+                <Label FontFamily="fa-solid-900"
+                       Text="&#xf060;"
+                       FontSize="{DynamicResource FontSize16}"
+                       TextColor="White"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       AutomationId="BtnBack"
+                       SemanticProperties.Description="Back"
+                       SemanticProperties.Hint="Tap to go back" />
+            </Border>
+
+            <!-- Top-right showcase toggle -->
+            <Border HorizontalOptions="End"
+                    VerticalOptions="Start"
+                    Margin="16,16"
+                    WidthRequest="40"
+                    HeightRequest="40"
+                    StrokeShape="RoundRectangle 20"
+                    BackgroundColor="#80000000"
+                    StrokeThickness="0">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding ToggleShowcaseCommand}" />
+                </Border.GestureRecognizers>
+                <Label FontFamily="fa-solid-900"
+                       Text="&#xf091;"
+                       FontSize="{DynamicResource FontSize16}"
+                       TextColor="{Binding Entry.IsShowcase, Converter={StaticResource ShowcaseColorConverter}}"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       AutomationId="BtnShowcase"
+                       SemanticProperties.Description="Showcase"
+                       SemanticProperties.Hint="Tap to toggle showcase status" />
+            </Border>
+
+            <!-- Bottom overlay: catalog number + rarity -->
+            <Border VerticalOptions="End"
+                    HorizontalOptions="Fill"
+                    BackgroundColor="#80000000"
+                    StrokeThickness="0"
+                    Padding="16,8">
+                <Grid ColumnDefinitions="Auto,*,Auto">
+                    <Label Grid.Column="0"
+                           Text="{Binding Entry.CatalogNumber}"
+                           FontSize="{DynamicResource FontSize14}"
+                           FontAttributes="Bold"
+                           TextColor="White"
+                           VerticalOptions="Center"
+                           SemanticProperties.Description="{Binding Entry.CatalogNumber}" />
+
+                    <Border Grid.Column="2"
+                            StrokeShape="RoundRectangle 4"
+                            BackgroundColor="{Binding Entry.Rarity, Converter={StaticResource RarityToColorConverter}}"
+                            StrokeThickness="0"
+                            Padding="12,4">
+                        <Label Text="{Binding Entry.Rarity}"
+                               FontSize="{DynamicResource FontSize14}"
+                               FontAttributes="Bold"
+                               TextColor="White"
+                               SemanticProperties.Description="{Binding Entry.Rarity}" />
+                    </Border>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- Scrollable content -->
+        <ScrollView Grid.Row="1"
+                    Padding="16,16,16,8">
+            <VerticalStackLayout Spacing="20">
+
+                <!-- Info section -->
+                <VerticalStackLayout Spacing="12">
+                    <!-- Food name -->
+                    <Label Text="{Binding Entry.Name}"
+                           FontSize="{DynamicResource FontSize24}"
+                           FontAttributes="Bold"
+                           TextColor="{DynamicResource TextPrimary}"
+                           SemanticProperties.Description="{Binding Entry.Name}" />
+
+                    <!-- Tags row -->
+                    <HorizontalStackLayout Spacing="8">
+                        <Border StrokeShape="RoundRectangle 12"
+                                BackgroundColor="{DynamicResource PrimaryLight}"
+                                StrokeThickness="0"
+                                Padding="10,4">
+                            <Label Text="{Binding Entry.Region}"
+                                   FontSize="{DynamicResource FontSize12}"
+                                   TextColor="{DynamicResource Primary}"
+                                   SemanticProperties.Description="{Binding Entry.Region}" />
+                        </Border>
+                        <Border StrokeShape="RoundRectangle 12"
+                                BackgroundColor="{DynamicResource PrimaryLight}"
+                                StrokeThickness="0"
+                                Padding="10,4"
+                                IsVisible="{Binding Entry.PrimaryTaste, Converter={StaticResource StringNotNullConverter}}">
+                            <Label Text="{Binding Entry.PrimaryTaste}"
+                                   FontSize="{DynamicResource FontSize12}"
+                                   TextColor="{DynamicResource Primary}" />
+                        </Border>
+                        <Border StrokeShape="RoundRectangle 12"
+                                BackgroundColor="{DynamicResource PrimaryLight}"
+                                StrokeThickness="0"
+                                Padding="10,4">
+                            <Label Text="{Binding Entry.PriceRange, Converter={StaticResource PriceRangeToStringConverter}}"
+                                   FontSize="{DynamicResource FontSize12}"
+                                   TextColor="{DynamicResource Primary}" />
+                        </Border>
+                    </HorizontalStackLayout>
+
+                    <!-- Star rating -->
+                    <HorizontalStackLayout Spacing="4"
+                                           VerticalOptions="Center">
+                        <Label FontFamily="fa-solid-900"
+                               Text="{Binding Entry.StarRating, Converter={StaticResource RatingToStarConverter}, ConverterParameter=1}"
+                               FontSize="{DynamicResource FontSize20}"
+                               TextColor="#FFB300" />
+                        <Label FontFamily="fa-solid-900"
+                               Text="{Binding Entry.StarRating, Converter={StaticResource RatingToStarConverter}, ConverterParameter=2}"
+                               FontSize="{DynamicResource FontSize20}"
+                               TextColor="#FFB300" />
+                        <Label FontFamily="fa-solid-900"
+                               Text="{Binding Entry.StarRating, Converter={StaticResource RatingToStarConverter}, ConverterParameter=3}"
+                               FontSize="{DynamicResource FontSize20}"
+                               TextColor="#FFB300" />
+                        <Label FontFamily="fa-solid-900"
+                               Text="{Binding Entry.StarRating, Converter={StaticResource RatingToStarConverter}, ConverterParameter=4}"
+                               FontSize="{DynamicResource FontSize20}"
+                               TextColor="#FFB300" />
+                        <Label FontFamily="fa-solid-900"
+                               Text="{Binding Entry.StarRating, Converter={StaticResource RatingToStarConverter}, ConverterParameter=5}"
+                               FontSize="{DynamicResource FontSize20}"
+                               TextColor="#FFB300" />
+                        <Label Text="{Binding Entry.StarRating, StringFormat='{0} Stars'}"
+                               FontSize="{DynamicResource FontSize14}"
+                               TextColor="{DynamicResource TextSecondary}"
+                               VerticalOptions="Center"
+                               Margin="8,0,0,0" />
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+
+                <!-- Three-row property table -->
+                <Border BackgroundColor="{DynamicResource Surface}"
+                        StrokeShape="RoundRectangle 12"
+                        StrokeThickness="0"
+                        Padding="16">
+                    <Border.Shadow>
+                        <Shadow Brush="#15000000"
+                                Offset="0,2"
+                                Radius="6" />
+                    </Border.Shadow>
+                    <VerticalStackLayout Spacing="12">
+                        <!-- Aroma -->
+                        <Grid ColumnDefinitions="Auto,*"
+                              ColumnSpacing="12">
+                            <Label Grid.Column="0"
+                                   FontFamily="fa-solid-900"
+                                   Text="&#xf06c;"
+                                   FontSize="{DynamicResource FontSize16}"
+                                   TextColor="{DynamicResource Primary}"
+                                   VerticalOptions="Center"
+                                   AutomationId="IconAroma"
+                                   SemanticProperties.Description="Aroma" />
+                            <Label Grid.Column="1"
+                                   Text="{Binding Entry.AromaTag}"
+                                   FontSize="{DynamicResource FontSize14}"
+                                   TextColor="{DynamicResource TextPrimary}"
+                                   VerticalOptions="Center" />
+                        </Grid>
+
+                        <BoxView HeightRequest="1"
+                                 Color="{DynamicResource PrimaryLight}" />
+
+                        <!-- Texture -->
+                        <Grid ColumnDefinitions="Auto,*"
+                              ColumnSpacing="12">
+                            <Label Grid.Column="0"
+                                   FontFamily="fa-solid-900"
+                                   Text="&#xf005;"
+                                   FontSize="{DynamicResource FontSize16}"
+                                   TextColor="{DynamicResource Primary}"
+                                   VerticalOptions="Center"
+                                   AutomationId="IconTexture"
+                                   SemanticProperties.Description="Texture" />
+                            <Label Grid.Column="1"
+                                   Text="{Binding Entry.TextureTag}"
+                                   FontSize="{DynamicResource FontSize14}"
+                                   TextColor="{DynamicResource TextPrimary}"
+                                   VerticalOptions="Center" />
+                        </Grid>
+
+                        <BoxView HeightRequest="1"
+                                 Color="{DynamicResource PrimaryLight}" />
+
+                        <!-- Main ingredients -->
+                        <Grid ColumnDefinitions="Auto,*"
+                              ColumnSpacing="12">
+                            <Label Grid.Column="0"
+                                   FontFamily="fa-solid-900"
+                                   Text="&#xf0c4;"
+                                   FontSize="{DynamicResource FontSize16}"
+                                   TextColor="{DynamicResource Primary}"
+                                   VerticalOptions="Center"
+                                   AutomationId="IconIngredients"
+                                   SemanticProperties.Description="Ingredients" />
+                            <Label Grid.Column="1"
+                                   Text="{Binding IngredientsText}"
+                                   FontSize="{DynamicResource FontSize13}"
+                                   TextColor="{DynamicResource TextSecondary}"
+                                   VerticalOptions="Center"
+                                   LineBreakMode="WordWrap" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Description section -->
+                <VerticalStackLayout Spacing="8"
+                                     IsVisible="{Binding Entry.Description, Converter={StaticResource StringNotNullConverter}}">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Grid.Column="0"
+                               Text="Food Description"
+                               FontSize="{DynamicResource FontSize16}"
+                               FontAttributes="Bold"
+                               TextColor="{DynamicResource TextPrimary}"
+                               SemanticProperties.Description="Food description" />
+                        <Border Grid.Column="1"
+                                WidthRequest="36"
+                                HeightRequest="36"
+                                StrokeShape="RoundRectangle 18"
+                                BackgroundColor="{DynamicResource PrimaryLight}"
+                                StrokeThickness="0">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding ToggleSpeakingCommand}" />
+                            </Border.GestureRecognizers>
+                            <Label FontFamily="fa-solid-900"
+                                   Text="&#xf028;"
+                                   FontSize="{DynamicResource FontSize14}"
+                                   TextColor="{DynamicResource Primary}"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center"
+                                   AutomationId="BtnSpeakDesc"
+                                   SemanticProperties.Description="Read description aloud"
+                                   SemanticProperties.Hint="Tap to read description aloud" />
+                        </Border>
+                    </Grid>
+                    <Label Text="{Binding Entry.Description}"
+                           FontSize="{DynamicResource FontSize14}"
+                           TextColor="{DynamicResource TextSecondary}"
+                           LineHeight="1.6"
+                           LineBreakMode="WordWrap" />
+                </VerticalStackLayout>
+
+                <!-- Collection notes -->
+                <VerticalStackLayout Spacing="8"
+                                     IsVisible="{Binding Entry.NoteText, Converter={StaticResource StringNotNullConverter}}">
+                    <Label Text="Notes"
+                           FontSize="{DynamicResource FontSize16}"
+                           FontAttributes="Bold"
+                           TextColor="{DynamicResource TextPrimary}"
+                           SemanticProperties.Description="Collection notes" />
+                    <Label Text="{Binding Entry.NoteText}"
+                           FontSize="{DynamicResource FontSize14}"
+                           TextColor="{DynamicResource TextSecondary}"
+                           LineHeight="1.6"
+                           LineBreakMode="WordWrap" />
+
+                    <!-- Voice note -->
+                    <VerticalStackLayout Spacing="4"
+                                         IsVisible="{Binding Entry.VoiceNoteText, Converter={StaticResource StringNotNullConverter}}">
+                        <Label Text="Voice Note"
+                               FontSize="{DynamicResource FontSize13}"
+                               FontAttributes="Bold"
+                               TextColor="{DynamicResource TextSecondary}" />
+                        <Label Text="{Binding Entry.VoiceNoteText}"
+                               FontSize="{DynamicResource FontSize13}"
+                               TextColor="{DynamicResource TextSecondary}"
+                               LineBreakMode="WordWrap"
+                               FontAttributes="Italic" />
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+
+                <!-- Discovery location -->
+                <VerticalStackLayout Spacing="8"
+                                     IsVisible="{Binding Entry.LocationName, Converter={StaticResource StringNotNullConverter}}">
+                    <Label Text="Discovery Location"
+                           FontSize="{DynamicResource FontSize16}"
+                           FontAttributes="Bold"
+                           TextColor="{DynamicResource TextPrimary}"
+                           SemanticProperties.Description="Discovery location" />
+                    <Border BackgroundColor="{DynamicResource Surface}"
+                            StrokeShape="RoundRectangle 12"
+                            StrokeThickness="0"
+                            Padding="16">
+                        <Border.Shadow>
+                            <Shadow Brush="#10000000"
+                                    Offset="0,1"
+                                    Radius="4" />
+                        </Border.Shadow>
+                        <Grid ColumnDefinitions="Auto,*"
+                              ColumnSpacing="12">
+                            <Label Grid.Column="0"
+                                   FontFamily="fa-solid-900"
+                                   Text="&#xf3c5;"
+                                   FontSize="{DynamicResource FontSize20}"
+                                   TextColor="{DynamicResource Primary}"
+                                   VerticalOptions="Center"
+                                   AutomationId="IconLocation"
+                                   SemanticProperties.Description="Location pin" />
+                            <VerticalStackLayout Grid.Column="1"
+                                                 VerticalOptions="Center">
+                                <Label Text="{Binding Entry.LocationName}"
+                                       FontSize="{DynamicResource FontSize14}"
+                                       FontAttributes="Bold"
+                                       TextColor="{DynamicResource TextPrimary}" />
+                                <Label Text="{Binding CoordinatesText}"
+                                       FontSize="{DynamicResource FontSize12}"
+                                       TextColor="{DynamicResource TextSecondary}"
+                                       FontFamily="monospace" />
+                            </VerticalStackLayout>
+                        </Grid>
+                    </Border>
+                </VerticalStackLayout>
+
+                <!-- Bottom spacing -->
+                <BoxView HeightRequest="16" />
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Bottom action bar -->
+        <Border Grid.Row="2"
+                BackgroundColor="{DynamicResource Surface}"
+                StrokeThickness="0"
+                Padding="16,12"
+                HorizontalOptions="Fill">
+            <Border.Shadow>
+                <Shadow Brush="#20000000"
+                        Offset="0,-2"
+                        Radius="8" />
+            </Border.Shadow>
+            <Grid ColumnDefinitions="*,*,*"
+                  ColumnSpacing="12">
+                <!-- Read/Stop -->
+                <Button Grid.Column="0"
+                        Text="{Binding SpeakButtonText}"
+                        FontSize="{DynamicResource FontSize14}"
+                        TextColor="White"
+                        BackgroundColor="{DynamicResource Primary}"
+                        Command="{Binding ToggleSpeakingCommand}"
+                        CornerRadius="8"
+                        HeightRequest="44"
+                        AutomationId="BtnToggleSpeak"
+                        SemanticProperties.Description="{Binding SpeakButtonText}"
+                        SemanticProperties.Hint="Tap to read aloud or stop" />
+
+                <!-- Edit -->
+                <Button Grid.Column="1"
+                        Text="Edit"
+                        FontSize="{DynamicResource FontSize14}"
+                        TextColor="{DynamicResource Primary}"
+                        BackgroundColor="{DynamicResource PrimaryLight}"
+                        Command="{Binding EditCommand}"
+                        CornerRadius="8"
+                        HeightRequest="44"
+                        AutomationId="BtnEdit"
+                        SemanticProperties.Description="Edit"
+                        SemanticProperties.Hint="Tap to edit this entry" />
+
+                <!-- Change collect status -->
+                <Button Grid.Column="2"
+                        Text="{Binding CollectStatusText}"
+                        FontSize="{DynamicResource FontSize14}"
+                        TextColor="White"
+                        BackgroundColor="{DynamicResource Accent}"
+                        Command="{Binding ChangeCollectStatusCommand}"
+                        CornerRadius="8"
+                        HeightRequest="44"
+                        AutomationId="BtnCollectStatus"
+                        SemanticProperties.Description="{Binding CollectStatusText}"
+                        SemanticProperties.Hint="Tap to change collect status" />
+            </Grid>
+        </Border>
+
+    </Grid>
+</ContentPage>
