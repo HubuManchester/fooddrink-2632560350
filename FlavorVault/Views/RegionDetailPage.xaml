@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:FlavorVault.ViewModels"
+             xmlns:converters="clr-namespace:FlavorVault.Converters"
+             xmlns:controls="clr-namespace:FlavorVault.Controls"
+             x:Class="FlavorVault.Views.RegionDetailPage"
+             x:DataType="viewmodels:RegionDetailViewModel"
+             Title="地区图鉴"
+             BackgroundColor="{DynamicResource Background}">
+
+    <Grid RowDefinitions="Auto,Auto,Auto,*,Auto"
+          RowSpacing="0">
+
+        <!-- 地区头部 -->
+        <VerticalStackLayout Grid.Row="0"
+                             Padding="20,20,20,8"
+                             Spacing="8">
+            <Label Text="{Binding RegionName}"
+                   FontSize="{DynamicResource FontSize28}"
+                   FontAttributes="Bold"
+                   TextColor="{DynamicResource TextPrimary}" />
+            <Label Text="{Binding RegionDescription}"
+                   FontSize="{DynamicResource FontSize14}"
+                   TextColor="{DynamicResource TextSecondary}"
+                   LineBreakMode="WordWrap" />
+
+            <!-- 稀有度统计 -->
+            <ScrollView Orientation="Horizontal"
+                        HorizontalScrollBarVisibility="Never">
+                <HorizontalStackLayout Spacing="8"
+                                       Margin="0,4">
+                    <Border BackgroundColor="{DynamicResource PrimaryLight}"
+                            StrokeShape="RoundRectangle 10"
+                            StrokeThickness="0"
+                            Padding="10,5">
+                        <Label FontSize="{DynamicResource FontSize13}"
+                               TextColor="{DynamicResource TextPrimary}">
+                            <Label.Text>
+                                <MultiBinding StringFormat="共 {0} 件">
+                                    <Binding Path="TotalCount" />
+                                </MultiBinding>
+                            </Label.Text>
+                        </Label>
+                    </Border>
+                    <Border BackgroundColor="{DynamicResource RarityCommon}"
+                            StrokeShape="RoundRectangle 10"
+                            StrokeThickness="0"
+                            Padding="10,5">
+                        <Label TextColor="White"
+                               FontSize="{DynamicResource FontSize13}">
+                            <Label.Text>
+                                <MultiBinding StringFormat="日常 {0}">
+                                    <Binding Path="CommonCount" />
+                                </MultiBinding>
+                            </Label.Text>
+                        </Label>
+                    </Border>
+                    <Border BackgroundColor="{DynamicResource RarityUncommon}"
+                            StrokeShape="RoundRectangle 10"
+                            StrokeThickness="0"
+                            Padding="10,5">
+                        <Label TextColor="White"
+                               FontSize="{DynamicResource FontSize13}">
+                            <Label.Text>
+                                <MultiBinding StringFormat="推荐 {0}">
+                                    <Binding Path="UncommonCount" />
+                                </MultiBinding>
+                            </Label.Text>
+                        </Label>
+                    </Border>
+                    <Border BackgroundColor="{DynamicResource RarityRare}"
+                            StrokeShape="RoundRectangle 10"
+                            StrokeThickness="0"
+                            Padding="10,5">
+                        <Label TextColor="White"
+                               FontSize="{DynamicResource FontSize13}">
+                            <Label.Text>
+                                <MultiBinding StringFormat="限定 {0}">
+                                    <Binding Path="RareCount" />
+                                </MultiBinding>
+                            </Label.Text>
+                        </Label>
+                    </Border>
+                    <Border BackgroundColor="{DynamicResource RarityEpic}"
+                            StrokeShape="RoundRectangle 10"
+                            StrokeThickness="0"
+                            Padding="10,5">
+                        <Label TextColor="White"
+                               FontSize="{DynamicResource FontSize13}">
+                            <Label.Text>
+                                <MultiBinding StringFormat="珍藏 {0}">
+                                    <Binding Path="EpicCount" />
+                                </MultiBinding>
+                            </Label.Text>
+                        </Label>
+                    </Border>
+                </HorizontalStackLayout>
+            </ScrollView>
+        </VerticalStackLayout>
+
+        <!-- 收录进度条 -->
+        <Grid Grid.Row="1"
+              ColumnDefinitions="*,Auto"
+              Padding="20,8"
+              HeightRequest="30">
+            <ProgressBar Grid.Column="0"
+                         Progress="{Binding ProgressPercent}"
+                         ProgressColor="{DynamicResource Primary}"
+                         VerticalOptions="Center"
+                         HeightRequest="8" />
+            <Label Grid.Column="1"
+                   Text="{Binding ProgressText}"
+                   FontSize="{DynamicResource FontSize13}"
+                   TextColor="{DynamicResource TextSecondary}"
+                   VerticalOptions="Center"
+                   Margin="12,0,0,0" />
+        </Grid>
+
+        <!-- 分隔线 -->
+        <BoxView Grid.Row="2"
+                 HeightRequest="1"
+                 BackgroundColor="{DynamicResource PrimaryLight}"
+                 Margin="20,0" />
+
+        <!-- 图鉴列表（按稀有度排序） -->
+        <CollectionView Grid.Row="3"
+                        ItemsSource="{Binding Entries}"
+                        SelectionMode="None"
+                        Margin="12,8">
+            <CollectionView.ItemsLayout>
+                <GridItemsLayout Orientation="Vertical"
+                                 Span="2"
+                                 HorizontalItemSpacing="8"
+                                 VerticalItemSpacing="8" />
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <controls:CatalogGridCard />
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+            <CollectionView.EmptyView>
+                <VerticalStackLayout HorizontalOptions="Center"
+                                     VerticalOptions="Center"
+                                     Spacing="12"
+                                     Grid.ColumnSpan="2">
+                    <Label Text="&#xf0f5;"
+                           FontFamily="fa-solid-900"
+                           FontSize="{DynamicResource FontSize40}"
+                           TextColor="{DynamicResource TextSecondary}"
+                           HorizontalOptions="Center" />
+                    <Label Text="该地区暂无图鉴条目"
+                           FontSize="{DynamicResource FontSize16}"
+                           TextColor="{DynamicResource TextSecondary}"
+                           HorizontalOptions="Center" />
+                    <Label Text="快去录入第一道美食吧"
+                           FontSize="{DynamicResource FontSize13}"
+                           TextColor="{DynamicResource TextSecondary}"
+                           HorizontalOptions="Center" />
+                </VerticalStackLayout>
+            </CollectionView.EmptyView>
+        </CollectionView>
+
+        <!-- 底部按钮 -->
+        <Border Grid.Row="4"
+                BackgroundColor="{DynamicResource Surface}"
+                StrokeShape="RoundRectangle 0"
+                StrokeThickness="0"
+                Padding="16,12"
+                VerticalOptions="End">
+            <Button Text="&#xf067; 录入该地区新条目"
+                    AutomationId="BtnAddRegionEntry"
+                    FontFamily="fa-solid-900"
+                    FontSize="{DynamicResource FontSize15}"
+                    FontAttributes="Bold"
+                    BackgroundColor="{DynamicResource Primary}"
+                    TextColor="White"
+                    HeightRequest="48"
+                    CornerRadius="24"
+                    Command="{Binding GoToNewEntryCommand}" />
+        </Border>
+    </Grid>
+</ContentPage>
