@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:converters="clr-namespace:FlavorVault.Converters"
+             xmlns:models="clr-namespace:FlavorVault.Models"
+             x:Class="FlavorVault.Controls.WishCard"
+             x:Name="This">
+
+    <ContentView.Resources>
+        <converters:PriorityToColorConverter x:Key="PriorityToColorConverter" />
+        <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
+    </ContentView.Resources>
+
+    <Border
+        StrokeShape="RoundRectangle 12"
+        StrokeThickness="0"
+        BackgroundColor="{AppThemeBinding Light={DynamicResource Surface}, Dark={DynamicResource Surface}}"
+        Padding="0"
+        Margin="4,2">
+        <Border.Shadow>
+            <Shadow Brush="{AppThemeBinding Light=#20000000, Dark=#30000000}"
+                    Offset="0,2"
+                    Radius="6"
+                    Opacity="0.3" />
+        </Border.Shadow>
+
+        <Grid ColumnDefinitions="3,*,Auto" Padding="0" ColumnSpacing="0">
+
+            <!-- 左：优先级色标竖条 -->
+            <Border
+                Grid.Column="0"
+                BackgroundColor="{Binding Source={x:Reference This}, Path=WishItem.Priority, Converter={StaticResource PriorityToColorConverter}}"
+                StrokeShape="RoundRectangle 3,0,0,3"
+                StrokeThickness="0" />
+
+            <!-- 中：食物信息 -->
+            <Grid Grid.Column="1" RowDefinitions="Auto,Auto" Padding="12,8" RowSpacing="2">
+
+                <!-- 中上：食物名称（已完成则加删除线） -->
+                <Label Grid.Row="0"
+                       Text="{Binding Source={x:Reference This}, Path=WishItem.FoodName}"
+                       FontAttributes="Bold"
+                       FontSize="{DynamicResource FontSize14}"
+                       LineBreakMode="TailTruncation"
+                       HorizontalOptions="Start"
+                       TextColor="{AppThemeBinding Light={DynamicResource TextPrimary}, Dark={DynamicResource TextPrimary}}"
+                       TextDecorations="{Binding Source={x:Reference This}, Path=WishItem.IsCompleted, Converter={StaticResource InverseBoolConverter}, ConverterParameter=Strikethrough}">
+                </Label>
+
+                <!-- 使用代码-behind 处理删除线，通过 IsVisible 两个 Label 实现 -->
+                <Label Grid.Row="0"
+                       Text="{Binding Source={x:Reference This}, Path=WishItem.FoodName}"
+                       FontAttributes="Bold"
+                       FontSize="{DynamicResource FontSize14}"
+                       LineBreakMode="TailTruncation"
+                       HorizontalOptions="Start"
+                       TextColor="{AppThemeBinding Light=#999999, Dark=#777777}"
+                       TextDecorations="Strikethrough"
+                       IsVisible="{Binding Source={x:Reference This}, Path=WishItem.IsCompleted}" />
+
+                <!-- 中下：菜系地区 + 来源原因（灰色小字） -->
+                <HorizontalStackLayout Grid.Row="1" Spacing="6">
+                    <Label Text="{Binding Source={x:Reference This}, Path=WishItem.Region}"
+                           FontSize="{DynamicResource FontSize11}"
+                           TextColor="{AppThemeBinding Light={DynamicResource TextSecondary}, Dark={DynamicResource TextSecondary}}" />
+                    <Label Text="{Binding Source={x:Reference This}, Path=WishItem.SourceReason}"
+                           FontSize="{DynamicResource FontSize11}"
+                           LineBreakMode="TailTruncation"
+                           TextColor="{AppThemeBinding Light=#999999, Dark=#777777}" />
+                </HorizontalStackLayout>
+            </Grid>
+
+            <!-- 右：完成按钮 -->
+            <Button
+                Grid.Column="2"
+                Margin="0,0,12,0"
+                WidthRequest="36"
+                HeightRequest="36"
+                MinimumWidthRequest="44"
+                MinimumHeightRequest="44"
+                Padding="0"
+                BackgroundColor="Transparent"
+                Command="{Binding Source={x:Reference This}, Path=ToggleCompleteCommand}"
+                CommandParameter="{Binding Source={x:Reference This}, Path=WishItem}"
+                AutomationId="WishCardToggleCompleteButton">
+                <Button.ImageSource>
+                    <FontImageSource
+                        Glyph="&#xf096;"
+                        FontFamily="fa-solid-900"
+                        Size="20"
+                        Color="{AppThemeBinding Light={DynamicResource TextSecondary}, Dark={DynamicResource TextSecondary}}" />
+                </Button.ImageSource>
+            </Button>
+
+            <!-- 已完成状态：实心绿色 check 图标覆盖在按钮位置 -->
+            <Border
+                Grid.Column="2"
+                Margin="0,0,12,0"
+                WidthRequest="36"
+                HeightRequest="36"
+                BackgroundColor="#4CAF50"
+                StrokeShape="RoundRectangle 18"
+                StrokeThickness="0"
+                IsVisible="{Binding Source={x:Reference This}, Path=WishItem.IsCompleted}"
+                HorizontalOptions="Center"
+                VerticalOptions="Center">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer
+                        Command="{Binding Source={x:Reference This}, Path=ToggleCompleteCommand}"
+                        CommandParameter="{Binding Source={x:Reference This}, Path=WishItem}" />
+                </Border.GestureRecognizers>
+                <Label Text="&#xf00c;"
+                       FontFamily="fa-solid-900"
+                       FontSize="{DynamicResource FontSize14}"
+                       TextColor="White"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center" />
+            </Border>
+
+        </Grid>
+    </Border>
+</ContentView>

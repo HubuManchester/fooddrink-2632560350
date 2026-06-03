@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:FlavorVault.ViewModels"
+             xmlns:converters="clr-namespace:FlavorVault.Converters"
+             x:Class="FlavorVault.Views.AboutPage"
+             x:DataType="viewmodels:AboutViewModel"
+             Title="关于"
+             BackgroundColor="{DynamicResource Background}">
+
+    <Grid RowDefinitions="Auto,*,Auto"
+          RowSpacing="0">
+
+        <!-- 返回按钮 -->
+        <Border Grid.Row="0"
+                BackgroundColor="{DynamicResource PrimaryLight}"
+                StrokeShape="RoundRectangle 18"
+                StrokeThickness="0"
+                WidthRequest="36"
+                HeightRequest="36"
+                HorizontalOptions="Start"
+                VerticalOptions="Start"
+                Margin="16,16,0,0">
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding GoBackCommand}" />
+            </Border.GestureRecognizers>
+            <Label Text="&#xf060;"
+                   FontFamily="fa-solid-900"
+                   FontSize="{DynamicResource FontSize14}"
+                   TextColor="{DynamicResource Primary}"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center" />
+        </Border>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Spacing="24"
+                                 Padding="24,16,24,32"
+                                 HorizontalOptions="Center"
+                                 VerticalOptions="Center">
+
+                <!-- 应用图标 -->
+                <Border BackgroundColor="{DynamicResource PrimaryLight}"
+                        StrokeShape="RoundRectangle 30"
+                        StrokeThickness="0"
+                        WidthRequest="100"
+                        HeightRequest="100"
+                        HorizontalOptions="Center">
+                    <Label Text="&#xf0f5;"
+                           FontFamily="fa-solid-900"
+                           FontSize="{DynamicResource FontSize44}"
+                           TextColor="{DynamicResource Primary}"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center" />
+                </Border>
+
+                <!-- 应用名 -->
+                <VerticalStackLayout Spacing="4"
+                                     HorizontalOptions="Center">
+                    <Label Text="味藏 FlavorVault"
+                           FontSize="{DynamicResource FontSize24}"
+                           FontAttributes="Bold"
+                           TextColor="{DynamicResource TextPrimary}"
+                           HorizontalOptions="Center" />
+                    <Label Text="{Binding VersionText}"
+                           FontSize="{DynamicResource FontSize14}"
+                           TextColor="{DynamicResource TextSecondary}"
+                           HorizontalOptions="Center" />
+                </VerticalStackLayout>
+
+                <!-- 描述 -->
+                <Label Text="面向美食爱好者的食物收藏图鉴工具。将每一道美食视作藏品，像编撰百科全书一样编号、归类、评定稀有度、组织收藏集。"
+                       FontSize="{DynamicResource FontSize15}"
+                       TextColor="{DynamicResource TextSecondary}"
+                       LineBreakMode="WordWrap"
+                       HorizontalTextAlignment="Center"
+                       Margin="0,8" />
+
+                <!-- 技术栈列表 -->
+                <Border BackgroundColor="{DynamicResource Surface}"
+                        StrokeShape="RoundRectangle 12"
+                        StrokeThickness="0"
+                        Padding="16"
+                        HorizontalOptions="Fill"
+                        Margin="0,8">
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="技术栈"
+                               FontSize="{DynamicResource FontSize16}"
+                               FontAttributes="Bold"
+                               TextColor="{DynamicResource TextPrimary}" />
+
+                        <Grid ColumnDefinitions="Auto,*"
+                              RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto"
+                              ColumnSpacing="12"
+                              RowSpacing="10">
+
+                            <Label Grid.Column="0" Grid.Row="0"
+                                   Text="&#xf12e;"
+                                   FontFamily="fa-solid-900"
+                                   FontSize="{DynamicResource FontSize14}"
+                                   TextColor="{DynamicResource Primary}"
+                                   VerticalOptions="Center" />
+                            <Label Grid.Column="1" Grid.Row="0"
+                                   Text=".NET MAUI (Android)"
+                                   FontSize="{DynamicResource FontSize14}"
+                                   TextColor="{DynamicResource TextPrimary}" />
+
+                            <Label Grid.Column="0" Grid.Row="1"
+                                   Text="&#xf1c0;"
+                                   FontFamily="fa-solid-900"
+                                   FontSize="{DynamicResource FontSize14}"
+                                   TextColor="{DynamicResource Primary}"
+                                   VerticalOptions="Center" />
+                            <Label Grid.Column="1" Grid.Row="1"
+                                   Text="SQLite 本地数据库"
+                                   FontSize="{DynamicResource FontSize14}"
+                                   TextColor="{DynamicResource TextPrimary}" />
+
+                            <Label Grid.Column="0" Grid.Row="2"
+                                   Text="&#xf0c0;"
+                                   FontFamily="fa-solid-900"
+                                   FontSize="{DynamicResource FontSize14}"
+                                   TextColor="{DynamicResource Primary}"
+                                   VerticalOptions="Center" />
+                            <Label Grid.Column="1" Grid.Row="2"
+                                   Text="MVVM 架构 (CommunityToolkit.Mvvm)"
+                                   FontSize="{DynamicResource FontSize14}"
+                                   TextColor="{DynamicResource TextPrimary}" />
+
+                            <Label Grid.Column="0" Grid.Row="3"
+                                   Text="&#xf03e;"
+                                   FontFamily="fa-solid-900"
+                                   FontSize="{DynamicResource FontSize14}"
+                                   TextColor="{DynamicResource Primary}"
+                                   VerticalOptions="Center" />
+                            <Label Grid.Column="1" Grid.Row="3"
+                                   Text="SkiaSharp 图像预处理"
+                                   FontSize="{DynamicResource FontSize14}"
+                                   TextColor="{DynamicResource TextPrimary}" />
+
+                            <Label Grid.Column="0" Grid.Row="4"
+                                   Text="&#xf544;"
+                                   FontFamily="fa-solid-900"
+                                   FontSize="{DynamicResource FontSize14}"
+                                   TextColor="{DynamicResource Primary}"
+                                   VerticalOptions="Center" />
+                            <Label Grid.Column="1" Grid.Row="4"
+                                   Text="ONNX YOLO 图像识别"
+                                   FontSize="{DynamicResource FontSize14}"
+                                   TextColor="{DynamicResource TextPrimary}" />
+
+                            <Label Grid.Column="0" Grid.Row="5"
+                                   Text="&#xf3c5;"
+                                   FontFamily="fa-solid-900"
+                                   FontSize="{DynamicResource FontSize14}"
+                                   TextColor="{DynamicResource Primary}"
+                                   VerticalOptions="Center" />
+                            <Label Grid.Column="1" Grid.Row="5"
+                                   Text="Microsoft.Maui.Controls.Maps"
+                                   FontSize="{DynamicResource FontSize14}"
+                                   TextColor="{DynamicResource TextPrimary}" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- 版权信息 -->
+                <Label Text="FlavorVault v1.0.0"
+                       FontSize="{DynamicResource FontSize12}"
+                       TextColor="{DynamicResource TextSecondary}"
+                       HorizontalOptions="Center"
+                       Margin="0,8" />
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

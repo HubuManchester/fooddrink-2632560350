@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:skia="clr-namespace:SkiaSharp.Views.Maui.Controls;assembly=SkiaSharp.Views.Maui.Controls"
+             x:Class="FlavorVault.Controls.RegionPieChart"
+             x:Name="This">
+
+    <Border StrokeShape="RoundRectangle 12"
+            StrokeThickness="0"
+            BackgroundColor="{AppThemeBinding Light={DynamicResource Surface}, Dark={DynamicResource Surface}}"
+            Padding="12"
+            Margin="4">
+        <Border.Shadow>
+            <Shadow Brush="{AppThemeBinding Light=#20000000, Dark=#30000000}"
+                    Offset="0,2" Radius="6" Opacity="0.3" />
+        </Border.Shadow>
+
+        <StackLayout Spacing="8">
+            <!-- 标题 -->
+            <Label Text="地区分布"
+                   FontAttributes="Bold"
+                   FontSize="{DynamicResource FontSize16}"
+                   TextColor="{AppThemeBinding Light={DynamicResource TextPrimary}, Dark={DynamicResource TextPrimary}}" />
+
+            <!-- 图表 + 图例 -->
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                <!-- 甜甜圈图 -->
+                <skia:SKCanvasView x:Name="CanvasView"
+                                   Grid.Column="0"
+                                   HeightRequest="170"
+                                   WidthRequest="170"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center"
+                                   PaintSurface="OnCanvasViewPaintSurface" />
+
+                <!-- 图例 -->
+                <FlexLayout x:Name="LegendContainer"
+                            Grid.Column="1"
+                            Direction="Column"
+                            Wrap="NoWrap"
+                            JustifyContent="Center"
+                            VerticalOptions="Center" />
+            </Grid>
+        </StackLayout>
+    </Border>
+</ContentView>

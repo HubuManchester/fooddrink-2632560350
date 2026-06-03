@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:FlavorVault.ViewModels"
+             xmlns:converters="clr-namespace:FlavorVault.Converters"
+             x:Class="FlavorVault.Views.CameraPage"
+             x:DataType="viewmodels:CameraViewModel"
+             Title="拍照识别"
+             BackgroundColor="{DynamicResource Background}">
+
+    <ContentPage.Resources>
+        <converters:StringToUriConverter x:Key="StringToUriConverter" />
+        <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
+        <converters:BoolToColorConverter x:Key="BoolToColorConverter"
+                                         TrueColor="{StaticResource Primary}"
+                                         FalseColor="{StaticResource TextSecondary}" />
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="*,Auto,Auto"
+          RowSpacing="0">
+
+        <!-- 拍照区域（摄像头画面/照片预览） -->
+        <Grid Grid.Row="0"
+              BackgroundColor="#1A1A1A"
+              Margin="0">
+
+            <!-- 无图片时的占位 -->
+            <VerticalStackLayout HorizontalOptions="Center"
+                                 VerticalOptions="Center"
+                                 Spacing="12"
+                                 IsVisible="{Binding HasImage, Converter={StaticResource InverseBoolConverter}}">
+                <Label Text="&#xf030;"
+                       FontFamily="fa-solid-900"
+                       FontSize="{DynamicResource FontSize60}"
+                       TextColor="#666666"
+                       HorizontalOptions="Center" />
+                <Label Text="点击下方按钮拍照或选取照片"
+                       FontSize="{DynamicResource FontSize16}"
+                       TextColor="#999999"
+                       HorizontalOptions="Center" />
+            </VerticalStackLayout>
+
+            <!-- 图片预览 -->
+            <Image Source="{Binding CapturedImagePath, Converter={StaticResource StringToUriConverter}}"
+                   Aspect="AspectFit"
+                   IsVisible="{Binding HasImage}" />
+        </Grid>
+
+        <!-- 操作区 -->
+        <Border Grid.Row="1"
+                BackgroundColor="{DynamicResource Surface}"
+                StrokeShape="RoundRectangle 0"
+                StrokeThickness="0"
+                Padding="16,12">
+            <HorizontalStackLayout HorizontalOptions="Center"
+                                   Spacing="24">
+                <!-- 拍照按钮 -->
+                <VerticalStackLayout Spacing="4"
+                                     HorizontalOptions="Center">
+                    <Border BackgroundColor="{DynamicResource PrimaryLight}"
+                            StrokeShape="RoundRectangle 28"
+                            StrokeThickness="0"
+                            WidthRequest="56"
+                            HeightRequest="56"
+                            HorizontalOptions="Center">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding TakePhotoCommand}" />
+                        </Border.GestureRecognizers>
+                        <Label Text="&#xf030;"
+                               FontFamily="fa-solid-900"
+                               FontSize="{DynamicResource FontSize22}"
+                               TextColor="{DynamicResource Primary}"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center" />
+                    </Border>
+                    <Label Text="拍照"
+                           FontSize="{DynamicResource FontSize12}"
+                           TextColor="{DynamicResource TextSecondary}"
+                           HorizontalOptions="Center" />
+                </VerticalStackLayout>
+
+                <!-- 从相册选取 -->
+                <VerticalStackLayout Spacing="4"
+                                     HorizontalOptions="Center">
+                    <Border BackgroundColor="{DynamicResource PrimaryLight}"
+                            StrokeShape="RoundRectangle 28"
+                            StrokeThickness="0"
+                            WidthRequest="56"
+                            HeightRequest="56"
+                            HorizontalOptions="Center">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding PickPhotoCommand}" />
+                        </Border.GestureRecognizers>
+                        <Label Text="&#xf03e;"
+                               FontFamily="fa-solid-900"
+                               FontSize="{DynamicResource FontSize22}"
+                               TextColor="{DynamicResource Primary}"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center" />
+                    </Border>
+                    <Label Text="相册"
+                           FontSize="{DynamicResource FontSize12}"
+                           TextColor="{DynamicResource TextSecondary}"
+                           HorizontalOptions="Center" />
+                </VerticalStackLayout>
+
+                <!-- 闪光灯开关 -->
+                <VerticalStackLayout Spacing="4"
+                                     HorizontalOptions="Center">
+                    <Border BackgroundColor="{DynamicResource PrimaryLight}"
+                            StrokeShape="RoundRectangle 28"
+                            StrokeThickness="0"
+                            WidthRequest="56"
+                            HeightRequest="56"
+                            HorizontalOptions="Center">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding ToggleFlashCommand}" />
+                        </Border.GestureRecognizers>
+                        <Label Text="&#xf0e7;"
+                               FontFamily="fa-solid-900"
+                               FontSize="{DynamicResource FontSize22}"
+                               TextColor="{Binding IsFlashOn, Converter={StaticResource BoolToColorConverter}}"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center" />
+                    </Border>
+                    <Label Text="闪光灯"
+                           FontSize="{DynamicResource FontSize12}"
+                           TextColor="{DynamicResource TextSecondary}"
+                           HorizontalOptions="Center" />
+                </VerticalStackLayout>
+            </HorizontalStackLayout>
+        </Border>
+
+        <!-- 识别结果区 -->
+        <Border Grid.Row="2"
+                BackgroundColor="{DynamicResource Surface}"
+                StrokeShape="RoundRectangle 16,16,0,0"
+                StrokeThickness="0"
+                Padding="16"
+                IsVisible="{Binding HasResult}">
+            <VerticalStackLayout Spacing="12">
+
+                <!-- 识别中 -->
+                <HorizontalStackLayout Spacing="12"
+                                       HorizontalOptions="Center"
+                                       IsVisible="{Binding IsRecognizing}">
+                    <ActivityIndicator IsRunning="{Binding IsRecognizing}"
+                                       Color="{DynamicResource Primary}" />
+                    <Label Text="正在识别..."
+                           FontSize="{DynamicResource FontSize16}"
+                           TextColor="{DynamicResource TextSecondary}"
+                           VerticalOptions="Center" />
+                </HorizontalStackLayout>
+
+                <!-- 识别结果 -->
+                <VerticalStackLayout Spacing="10"
+                                     IsVisible="{Binding HasRecognition}">
+                    <Label Text="识别结果"
+                           FontSize="{DynamicResource FontSize16}"
+                           FontAttributes="Bold"
+                           TextColor="{DynamicResource TextPrimary}" />
+
+                    <!-- 食物名称 + 置信度 -->
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Grid.Column="0"
+                               Text="{Binding RecognizedName}"
+                               FontSize="{DynamicResource FontSize22}"
+                               FontAttributes="Bold"
+                               TextColor="{DynamicResource Primary}"
+                               VerticalOptions="Center" />
+                        <Label Grid.Column="1"
+                               Text="{Binding ConfidenceText}"
+                               FontSize="{DynamicResource FontSize16}"
+                               TextColor="{DynamicResource TextSecondary}"
+                               VerticalOptions="Center" />
+                    </Grid>
+
+                    <!-- 推荐地区和稀有度 -->
+                    <HorizontalStackLayout Spacing="8">
+                        <Border BackgroundColor="{DynamicResource PrimaryLight}"
+                                StrokeShape="RoundRectangle 10"
+                                StrokeThickness="0"
+                                Padding="10,4">
+                            <Label Text="{Binding SuggestedRegion}"
+                                   FontSize="{DynamicResource FontSize13}"
+                                   TextColor="{DynamicResource Primary}" />
+                        </Border>
+                        <Border BackgroundColor="{DynamicResource AccentLight}"
+                                StrokeShape="RoundRectangle 10"
+                                StrokeThickness="0"
+                                Padding="10,4">
+                            <Label Text="{Binding SuggestedRarity}"
+                                   FontSize="{DynamicResource FontSize13}"
+                                   TextColor="{DynamicResource Accent}" />
+                        </Border>
+                    </HorizontalStackLayout>
+
+                    <!-- 操作按钮 -->
+                    <Grid ColumnDefinitions="*,*"
+                          ColumnSpacing="12"
+                          Margin="0,4,0,0">
+                        <Button Grid.Column="0"
+                                Text="&#xf46b; 录入图鉴"
+                                AutomationId="BtnSaveEntry"
+                                FontFamily="fa-solid-900"
+                                FontSize="{DynamicResource FontSize14}"
+                                BackgroundColor="{DynamicResource Primary}"
+                                TextColor="White"
+                                HeightRequest="44"
+                                CornerRadius="22"
+                                Command="{Binding SaveToCatalogCommand}" />
+                        <Button Grid.Column="1"
+                                Text="&#xf021; 重新识别"
+                                AutomationId="BtnRecognize"
+                                FontFamily="fa-solid-900"
+                                FontSize="{DynamicResource FontSize14}"
+                                BackgroundColor="{DynamicResource PrimaryLight}"
+                                TextColor="{DynamicResource Primary}"
+                                HeightRequest="44"
+                                CornerRadius="22"
+                                Command="{Binding RecognizeCommand}" />
+                    </Grid>
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </Border>
+    </Grid>
+</ContentPage>
